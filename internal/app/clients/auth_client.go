@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	auth "github.com/amrchnk/api-gateway/proto/auth"
-	"github.com/spf13/viper"
 )
 
 var (
-	authServerAddress = fmt.Sprintf("%s:%s", viper.GetString("authGrpcPort"), viper.GetString("authGrpcPort"))
+	authServerAddress = fmt.Sprintf("localhost:8001")
 )
 
 type AuthClient struct {

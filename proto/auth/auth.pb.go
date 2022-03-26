@@ -22,7 +22,7 @@ const (
 )
 
 // SIGNUP
-type SignUpRequest struct {
+type  SignUpRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	design_app "github.com/amrchnk/api-gateway"
 	"github.com/amrchnk/api-gateway/internal/app/clients"
 	"github.com/amrchnk/api-gateway/pkg/handler"
@@ -20,8 +21,8 @@ func init() {
 	if err != nil {
 		log.Fatalf("error initializing configs: %s", err.Error())
 	}
-
-	err = godotenv.Load(filepath.Join("../", ".env"))
+	fmt.Println(viper.GetString("port"))
+	err = godotenv.Load(filepath.Join("././", ".env"))
 	if err != nil {
 		log.Fatalf("error loading env variables: %s", err.Error())
 	}
@@ -31,8 +32,9 @@ func main(){
 	ctx:=context.Background()
 	clients.InitAuthClient(ctx)
 
-	authService:=service.NewAuthService(clients.AuthClient{})
-	handlers := handler.NewHandler(authService)
+	authService:=service.NewAuthService(clients.AuthClientExecutor())
+	GwService:=service.NewApiGWService(authService)
+	handlers := handler.NewHandler(GwService)
 
 	srv := new(design_app.Server)
 	go func() {
@@ -41,7 +43,7 @@ func main(){
 		}
 	}()
 
-	log.Printf("App Started at the port %s",viper.GetString(viper.GetString("port")))
+	log.Printf("App Started at the port %s",viper.GetString("port"))
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
@@ -55,7 +57,7 @@ func main(){
 }
 
 func initConfig() error {
-	viper.AddConfigPath("../configs")
+	viper.AddConfigPath("././configs")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
 }
