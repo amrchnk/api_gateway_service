@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	design_app "github.com/amrchnk/api-gateway"
 	"github.com/amrchnk/api-gateway/internal/app/clients"
 	"github.com/amrchnk/api-gateway/pkg/handler"
@@ -21,7 +20,6 @@ func init() {
 	if err != nil {
 		log.Fatalf("error initializing configs: %s", err.Error())
 	}
-	fmt.Println(viper.GetString("port"))
 	err = godotenv.Load(filepath.Join("././", ".env"))
 	if err != nil {
 		log.Fatalf("error loading env variables: %s", err.Error())

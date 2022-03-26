@@ -4,10 +4,7 @@ import (
 	"context"
 	"fmt"
 	auth "github.com/amrchnk/api-gateway/proto/auth"
-)
-
-var (
-	authServerAddress = fmt.Sprintf("localhost:8001")
+	"github.com/spf13/viper"
 )
 
 type AuthClient struct {
@@ -21,7 +18,7 @@ func AuthClientExecutor() *AuthClient {
 }
 
 func InitAuthClient(ctx context.Context) {
-	conn := GRPCClientConnection(ctx, authServerAddress)
+	conn := GRPCClientConnection(ctx, fmt.Sprintf("localhost:%s",viper.GetString("api.authGrpcPort")))
 	authClientConn.AuthServiceClient = auth.NewAuthServiceClient(conn)
 }
 
