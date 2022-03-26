@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package protobuf;
+
+option go_package = "/proto/auth";
+
+import "google/api/annotations.proto";
+
+service AuthService {
+    //registration
+    rpc SignUp (SignUpRequest) returns (SignUpResponse){
+        option(google.api.http)={
+            post: "/api/v1/auth/sign-up"
+            body: "*"
+        };
+    }
+
+    //authentication
+    rpc SignIn (SignInRequest) returns (SignInResponse){
+        option (google.api.http) = {
+            post: "/api/v1/auth/sign-in"
+            body: "*"
+        };
+    }
+
+}
+
+// SIGNUP
+message SignUpRequest {
+    string Login = 1;
+    string Password = 2;
+}
+
+message SignUpResponse {
+    int64 Slug = 1;
+}
+
+// SIGNIN
+message SignInRequest {
+    string Login = 1;
+    string Password = 2;
+}
+
+message SignInResponse {
+    string Session = 1;
+}
