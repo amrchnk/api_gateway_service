@@ -19,8 +19,8 @@ func (h *Handler)InitRoutes()*gin.Engine{
 	router := gin.Default()
 	store, _ := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
 	router.Use(sessions.Sessions("userSession", store))
-	//r.Use(sessions.Session{})
-	api:=router.Group("/api/test/auth")
+
+	api:=router.Group("/api/v1/auth")
 	{
 		api.POST("/sign-up", h.signUp)
 		api.POST("/sign-in", h.signIn)

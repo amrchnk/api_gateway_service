@@ -26,6 +26,16 @@ func init() {
 	}
 }
 
+// @title Blueprint Swagger API
+// @version 1.0
+// @description Swagger API for Designers App
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.email mirchenko1702@gmail.com
+
+// @host      localhost:8000
+// @BasePath /api/v1
 func main(){
 	ctx:=context.Background()
 	clients.InitAuthClient(ctx)
