@@ -19,6 +19,7 @@ func (h *Handler)InitRoutes()*gin.Engine{
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 	store, _ := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
+	store.Options(sessions.Options{MaxAge:   60 * 60 * 48})
 	router.Use(sessions.Sessions("userSession", store))
 
 	api:=router.Group("/api/v1/auth")
