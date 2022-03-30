@@ -26,7 +26,7 @@ func init() {
 	}
 }
 
-// @title Blueprint Swagger API
+// @title Designers App Swagger API
 // @version 1.0
 // @description Swagger API for Designers App
 // @termsOfService http://swagger.io/terms/

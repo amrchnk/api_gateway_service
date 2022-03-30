@@ -1,10 +1,13 @@
 package handler
 
 import (
+	"github.com/amrchnk/api-gateway/docs"
 	"github.com/amrchnk/api-gateway/pkg/service"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Handler struct {
@@ -19,15 +22,20 @@ func (h *Handler)InitRoutes()*gin.Engine{
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 	store, _ := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
-	store.Options(sessions.Options{MaxAge:   60 * 60 * 48})
 	router.Use(sessions.Sessions("userSession", store))
 
-	api:=router.Group("/api/v1/auth")
+
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	v1 := router.Group("/api/v1")
 	{
-		api.POST("/sign-up", h.signUp)
-		api.POST("/sign-in", h.signIn)
+		api := v1.Group("/auth")
+		{
+			api.POST("/sign-up", h.signUp)
+			api.POST("/sign-in", h.signIn)
+		}
 	}
 
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return router
 }
 

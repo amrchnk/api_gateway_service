@@ -18,7 +18,7 @@ func (a AuthService) SignUp(ctx context.Context,user models.User)(int,error){
 	return a.auth.SignUpFunc(ctx,user.Login,user.Password)
 }
 
-func (a AuthService) SignIn(ctx context.Context, user models.User) (string, error){
-	return a.auth.SignInFunc(ctx,user.Login,user.Password)
+func (a AuthService) SignIn(ctx context.Context, login,password string) (string, error){
+	return a.auth.SignInFunc(ctx,login,password)
 }
 
