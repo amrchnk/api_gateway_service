@@ -19,15 +19,20 @@ definitions:
     properties:
       created_at:
         type: string
+      id:
+        type: integer
       login:
         type: string
-      password_hash:
+      password:
         type: string
       role_id:
         type: integer
+      username:
+        type: string
     required:
     - login
-    - password_hash
+    - password
+    - username
     type: object
 host: localhost:8000
 info:
@@ -101,4 +106,87 @@ paths:
       summary: SignUp
       tags:
       - auth
+  /users/:
+    get:
+      consumes:
+      - application/json
+      description: get all users
+      operationId: get-all-users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get all users
+      tags:
+      - user
+  /users/:id:
+    delete:
+      consumes:
+      - application/json
+      description: delete user by id
+      operationId: delete-user-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: message
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Delete User By Id
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: get user by id
+      operationId: get-user-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get User By Id
+      tags:
+      - user
 swagger: "2.0"

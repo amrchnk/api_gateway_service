@@ -4,3 +4,6 @@ create:
 
 redis:
 	docker-compose up
+
+swag:
+	swag init -g cmd/main.go
