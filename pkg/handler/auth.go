@@ -1,9 +1,8 @@
 package handler
 
 import (
-	"encoding/json"
+	"fmt"
 	"github.com/amrchnk/api-gateway/pkg/models"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -33,14 +32,9 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 	input.Id = id
-	userSession, err := json.Marshal(input)
 	if err != nil {
 		return
 	}
-	c.SetCookie("UserSession", string(userSession), 100, "/", "localhost:8000", true, false)
-	session := sessions.Default(c)
-	session.Set("UserSession",userSession)
-	session.Save()
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id": id,
@@ -71,18 +65,20 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	userSession, err := h.Imp.SignIn(c,input.Login,input.Password)
+	token, err := h.Imp.SignIn(c,input.Login,input.Password)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.SetCookie("userSession", string(userSession), 100, "/", "localhost", true, false)
-
-	session := sessions.Default(c)
-	session.Set("userSession", userSession)
-	session.Save()
-
+	c.Header(authorizationHeader,fmt.Sprintf("Bearer %v", token))
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"session": userSession,
+		"token": token,
+	})
+}
+
+func (h *Handler) logOut(c *gin.Context) {
+	c.Header(authorizationHeader,"")
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Successfully logout",
 	})
 }

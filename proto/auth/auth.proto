@@ -7,40 +7,87 @@ option go_package = "/proto/auth";
 import "google/api/annotations.proto";
 
 service AuthService {
-    //registration
-    rpc SignUp (SignUpRequest) returns (SignUpResponse){
-        option(google.api.http)={
-            post: "/api/v1/auth/sign-up"
-            body: "*"
-        };
-    }
+  //registration
+  rpc SignUp (SignUpRequest) returns (SignUpResponse){
+    option(google.api.http) = {
+      post: "/api/v1/auth/sign-up"
+      body: "*"
+    };
+  }
 
-    //authentication
-    rpc SignIn (SignInRequest) returns (SignInResponse){
-        option (google.api.http) = {
-            post: "/api/v1/auth/sign-in"
-            body: "*"
-        };
-    }
+  //authentication
+  rpc SignIn (SignInRequest) returns (SignInResponse){
+    option (google.api.http) = {
+      post: "/api/v1/auth/sign-in"
+      body: "*"
+    };
+  }
+
+  //operation with user
+  rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdResponse){
+    option (google.api.http) = {
+      get: "/api/v1/users/{slug}"
+    };
+  }
+
+  rpc DeleteUserById (DeleteUserByIdRequest) returns (DeleteUserByIdResponse){
+    option (google.api.http) = {
+      delete: "/api/v1/users/{slug}"
+    };
+  }
+
+  rpc GetAllUsers (GetAllUsersRequest) returns (GetAllUsersResponse){}
 
 }
 
 // SIGNUP
 message SignUpRequest {
-    string Login = 1;
-    string Password = 2;
+  User user = 1;
 }
 
 message SignUpResponse {
-    int64 Slug = 1;
+  int64 slug = 1;
 }
 
 // SIGNIN
 message SignInRequest {
-    string Login = 1;
-    string Password = 2;
+  string login = 1;
+  string password = 2;
 }
 
 message SignInResponse {
-    string Session = 1;
+  User user = 1;
+}
+
+// GET USER
+message GetUserByIdRequest {
+  int64 slug = 1;
+}
+
+message GetUserByIdResponse {
+  User user = 1;
+}
+
+// DELETE USER
+message DeleteUserByIdRequest {
+  int64 slug = 1;
+}
+
+message DeleteUserByIdResponse {
+  string resp = 1;
+}
+
+// GET USERS
+message GetAllUsersRequest{}
+
+message GetAllUsersResponse{
+  repeated User user = 1;
+}
+
+message User{
+  int64 slug = 1;
+  string login = 2;
+  string password = 3;
+  string username = 4;
+  int64 userRoleId = 5;
 }

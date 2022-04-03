@@ -16,6 +16,10 @@ func NewApiGWService(as AuthService) *Implementation {
 }
 
 type IAuthService interface {
-	SignUp(ctx context.Context,user models.User)(int,error)
+	SignUp(ctx context.Context,user models.User)(int64,error)
 	SignIn(ctx context.Context, login,password string) (string, error)
+	ParseToken(accessToken string) (*tokenClaims, error)
+	GetUserById(ctx context.Context, id int64) (models.User, error)
+	DeleteUserById(ctx context.Context, id int64) (string, error)
+	GetAllUsers(ctx context.Context)([]models.User,error)
 }
