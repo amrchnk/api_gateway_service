@@ -15,6 +15,21 @@ definitions:
     - login
     - password
     type: object
+  models.UpdateUserResponse:
+    properties:
+      id:
+        type: integer
+      login:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: integer
+      username:
+        type: string
+    required:
+    - id
+    type: object
   models.User:
     properties:
       created_at:
@@ -132,6 +147,40 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       summary: Get all users
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update user fields
+      operationId: update-user
+      parameters:
+      - description: user fields to update
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserResponse'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: message
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Update User fields
       tags:
       - user
   /users/:id:

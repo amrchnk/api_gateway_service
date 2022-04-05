@@ -84,6 +84,24 @@ func (ac *AuthClient) DeleteUserByIdFunc(ctx context.Context, id int64) (string,
 	return msg, err
 }
 
+func (ac *AuthClient) UpdateUserFunc(ctx context.Context, user models.UpdateUserResponse) (string, error){
+	userReq:=auth.User{
+		Slug: user.Id,
+		Username: user.Username,
+		Login: user.Login,
+		Password: user.Password,
+		UserRoleId: user.RoleId,
+	}
+	req:=auth.UpdateUserRequest{
+		User: &userReq,
+	}
+	resp,err:=ac.UpdateUser(ctx,&req)
+	if err != nil {
+		return "", err
+	}
+	return resp.Resp,err
+}
+
 func (ac *AuthClient) GetAllUsersFunc(ctx context.Context) ([]models.User, error) {
 	req := auth.GetAllUsersRequest{}
 	resp, err := ac.GetAllUsers(ctx, &req)

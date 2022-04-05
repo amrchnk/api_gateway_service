@@ -35,6 +35,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			user.GET("/:id",h.AdminIdentity, h.getUserById)
 			user.GET("/",h.AdminIdentity, h.getAllUsers)
 			user.DELETE("/:id",h.AdminIdentity, h.deleteUserById)
+			user.PUT("/",h.updateUser)
 		}
 	}
 

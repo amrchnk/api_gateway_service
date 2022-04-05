@@ -36,6 +36,12 @@ service AuthService {
     };
   }
 
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse){
+    option (google.api.http) = {
+      put: "/api/v1/users/{slug}"
+    };
+  }
+
   rpc GetAllUsers (GetAllUsersRequest) returns (GetAllUsersResponse){}
 
 }
@@ -74,6 +80,16 @@ message DeleteUserByIdRequest {
 }
 
 message DeleteUserByIdResponse {
+  string resp = 1;
+}
+
+// UPDATE USER
+
+message UpdateUserRequest{
+  User user = 1;
+}
+
+message UpdateUserResponse{
   string resp = 1;
 }
 

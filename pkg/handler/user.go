@@ -26,7 +26,7 @@ func (h *Handler) getUserById(c *gin.Context) {
 		return
 	}
 
-	user, err := h.Imp.GetUserById(c,int64(userId))
+	user, err := h.Imp.GetUserById(c, int64(userId))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -47,14 +47,13 @@ func (h *Handler) getUserById(c *gin.Context) {
 // @Failure default {object} errorResponse
 // @Router /users/:id [delete]
 func (h *Handler) deleteUserById(c *gin.Context) {
-
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid list id param")
 		return
 	}
 
-	msg, err := h.Imp.DeleteUserById(c,int64(userId))
+	msg, err := h.Imp.DeleteUserById(c, int64(userId))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -63,8 +62,36 @@ func (h *Handler) deleteUserById(c *gin.Context) {
 	c.JSON(http.StatusOK, msg)
 }
 
-type getAllUsersResponse struct {
-	Data []models.User `json:"data"`
+// @Summary Update User fields
+// @Tags user
+// @Description Update user fields
+// @ID update-user
+// @Accept  json
+// @Produce  json
+// @Param input body models.UpdateUserResponse true "user fields to update"
+// @Success 200 {string} string "message"
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /users/ [put]
+func (h *Handler) updateUser(c *gin.Context) {
+	var userChanges models.UpdateUserResponse
+
+	if err := c.BindJSON(&userChanges); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	if userChanges.Username == "" && userChanges.Login == "" && userChanges.Password == "" {
+		newErrorResponse(c, http.StatusBadRequest, "at least one parameter must be passed to change")
+		return
+	}
+	msg, err := h.Imp.UpdateUser(c, userChanges)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, msg)
 }
 
 // @Summary Get all users
@@ -78,14 +105,14 @@ type getAllUsersResponse struct {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /users/ [get]
-func (h *Handler) getAllUsers(c *gin.Context){
-	users,err:=h.Imp.GetAllUsers(c)
+func (h *Handler) getAllUsers(c *gin.Context) {
+	users, err := h.Imp.GetAllUsers(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK,getAllUsersResponse{
+	c.JSON(http.StatusOK, models.GetAllUsersResponse{
 		Data: users,
 	})
 }
