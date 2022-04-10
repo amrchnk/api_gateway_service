@@ -39,9 +39,12 @@ func init() {
 func main(){
 	ctx:=context.Background()
 	clients.InitAuthClient(ctx)
+	clients.InitAccountClient(ctx)
 
 	authService:=service.NewAuthService(clients.AuthClientExecutor())
-	GwService:=service.NewApiGWService(authService)
+	accountService:=service.NewAccountService(clients.AccountClientExecutor())
+
+	GwService:=service.NewApiGWService(authService,accountService)
 	handlers := handler.NewHandler(GwService)
 
 	srv := new(design_app.Server)

@@ -7,11 +7,13 @@ import (
 
 type Implementation struct {
 	IAuthService
+	IAccountService
 }
 
-func NewApiGWService(as AuthService) *Implementation {
+func NewApiGWService(auth AuthService, account AccountService) *Implementation {
 	return &Implementation{
-		IAuthService: as,
+		IAuthService:    auth,
+		IAccountService: account,
 	}
 }
 
@@ -23,4 +25,9 @@ type IAuthService interface {
 	DeleteUserById(ctx context.Context, id int64) (string, error)
 	GetAllUsers(ctx context.Context) ([]models.User, error)
 	UpdateUser(ctx context.Context, user models.UpdateUserResponse) (string, error)
+}
+
+type IAccountService interface {
+	CreateAccount(ctx context.Context, userId int64) (int64, error)
+	DeleteAccount(ctx context.Context, userId int64) (string, error)
 }

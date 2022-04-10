@@ -13,37 +13,40 @@ import (
 // @ID create-account
 // @Accept  json
 // @Produce  json
-// @Param input body models.User true "account info"
+// @Param input body models.SignUpRequest true "account info"
 // @Success 200 {integer} integer 1
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
-	var input models.User
+	var request models.SignUpRequest
 
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.BindJSON(&request); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
-	id, err := h.Imp.SignUp(c,input)
+	user := models.User{
+		Login:    request.Login,
+		Password: request.Password,
+		Username: request.Username,
+	}
+	id, err := h.Imp.SignUp(c, user)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	input.Id = id
+
+	accountId, err := h.Imp.CreateAccount(c, id)
 	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("Error while creating user account: %v", err.Error()))
 		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
+		"user_id": id,
+		"account_id":accountId,
 	})
-}
-
-type signInInput struct {
-	Login string `json:"login" binding:"required"`
-	Password string `json:"password" binding:"required"`
 }
 
 // @Summary SignIn
@@ -52,32 +55,32 @@ type signInInput struct {
 // @ID login
 // @Accept  json
 // @Produce  json
-// @Param input body signInInput true "credentials"
+// @Param input body models.SignInRequest true "credentials"
 // @Success 200 {string} string "token"
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /auth/sign-in [post]
 func (h *Handler) signIn(c *gin.Context) {
-	var input signInInput
+	var request models.SignInRequest
 
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.BindJSON(&request); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	token, err := h.Imp.SignIn(c,input.Login,input.Password)
+	token, err := h.Imp.SignIn(c, request.Login, request.Password)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.Header(authorizationHeader,fmt.Sprintf("Bearer %v", token))
+	c.Header(authorizationHeader, fmt.Sprintf("Bearer %v", token))
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"token": token,
 	})
 }
 
 func (h *Handler) logOut(c *gin.Context) {
-	c.Header(authorizationHeader,"")
+	c.Header(authorizationHeader, "")
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Successfully logout",
 	})

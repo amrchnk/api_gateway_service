@@ -2,3 +2,4 @@ port: "8000"
 
 api:
   authGrpcPort: "8001"
+  accountGrpcPort: "8002"

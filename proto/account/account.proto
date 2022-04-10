@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package protobuf;
+
+option go_package = "/proto/account";
+
+import "google/api/annotations.proto";
+
+service AccountService {
+  //ACCOUNT
+  rpc CreateAccountByUserId (CreateAccountRequest) returns (CreateAccountResponse){
+    option(google.api.http) = {
+      post: "/api/v1/account/"
+      body: "*"
+    };
+  }
+
+  rpc GetAccountByUserId (GetAccountByUserIdRequest) returns (GetAccountByUserIdResponse){
+    option(google.api.http) = {
+      get: "/api/v1/account/{user_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteAccountByUserId (DeleteAccountByUserIdRequest) returns (DeleteAccountByUserIdResponse){
+    option(google.api.http) = {
+      delete: "/api/v1/account/{user_id}"
+      body: "*"
+    };
+  }
+}
+
+message CreateAccountRequest{
+  int64 user_id = 1;
+}
+
+message CreateAccountResponse{
+  int64 account_id = 1;
+}
+
+message GetAccountByUserIdRequest{
+  int64 user_id = 1;
+}
+
+message GetAccountByUserIdResponse{
+  Account account = 1;
+}
+
+message DeleteAccountByUserIdRequest{
+  int64 user_id = 1;
+}
+
+message DeleteAccountByUserIdResponse{
+  string message = 1;
+}
+
+message Account{
+  int64 id = 1;
+  int64 user_id = 2;
+}

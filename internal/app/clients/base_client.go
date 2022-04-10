@@ -27,3 +27,4 @@ func GRPCClientConnection(ctx context.Context, dsn string) *grpc.ClientConn{
 	}
 	return conn
 }
+

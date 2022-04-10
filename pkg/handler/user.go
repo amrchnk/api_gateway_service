@@ -53,6 +53,12 @@ func (h *Handler) deleteUserById(c *gin.Context) {
 		return
 	}
 
+	_, err = h.Imp.DeleteAccount(c, int64(userId))
+	if err!=nil{
+		newErrorResponse(c, http.StatusInternalServerError, "can't delete account: "+err.Error())
+		return
+	}
+
 	msg, err := h.Imp.DeleteUserById(c, int64(userId))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
