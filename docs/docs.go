@@ -47,9 +47,9 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "token",
+                        "description": "Success login",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.SignInResponse"
                         }
                     },
                     "400": {
@@ -96,7 +96,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "integer"
+                            "$ref": "#/definitions/models.SignUpResponse"
                         }
                     },
                     "400": {
@@ -221,6 +221,15 @@ const docTemplate = `{
                 ],
                 "summary": "Get User By Id",
                 "operationId": "get-user-by-id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -261,6 +270,15 @@ const docTemplate = `{
                 ],
                 "summary": "Delete User By Id",
                 "operationId": "delete-user-by-id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "message",
@@ -314,6 +332,14 @@ const docTemplate = `{
                 }
             }
         },
+        "models.SignInResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "models.SignUpRequest": {
             "type": "object",
             "required": [
@@ -330,6 +356,17 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "models.SignUpResponse": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },

@@ -14,7 +14,7 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param input body models.SignUpRequest true "account info"
-// @Success 200 {integer} integer 1
+// @Success 200 {object} models.SignUpResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /auth/sign-up [post]
@@ -43,9 +43,9 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"user_id": id,
-		"account_id":accountId,
+	c.JSON(http.StatusOK, models.SignUpResponse{
+		AccountId: accountId,
+		UserId: id,
 	})
 }
 
@@ -56,7 +56,7 @@ func (h *Handler) signUp(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param input body models.SignInRequest true "credentials"
-// @Success 200 {string} string "token"
+// @Success 200 {object} models.SignInResponse "Success login"
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /auth/sign-in [post]
@@ -74,8 +74,8 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 	c.Header(authorizationHeader, fmt.Sprintf("Bearer %v", token))
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"token": token,
+	c.JSON(http.StatusOK, models.SignInResponse{
+		Token: token,
 	})
 }
 

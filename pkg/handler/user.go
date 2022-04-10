@@ -13,6 +13,7 @@ import (
 // @ID get-user-by-id
 // @Accept  json
 // @Produce  json
+// @Param id   path int64  true  "User ID"
 // @Success 200 {object} models.User
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -41,6 +42,7 @@ func (h *Handler) getUserById(c *gin.Context) {
 // @ID delete-user-by-id
 // @Accept  json
 // @Produce  json
+// @Param id   path int64  true  "User ID"
 // @Success 200 {string} string "message"
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -54,7 +56,7 @@ func (h *Handler) deleteUserById(c *gin.Context) {
 	}
 
 	_, err = h.Imp.DeleteAccount(c, int64(userId))
-	if err!=nil{
+	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "can't delete account: "+err.Error())
 		return
 	}
@@ -106,7 +108,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 // @ID get-all-users
 // @Accept  json
 // @Produce  json
-// @Success 200 {string} getAllUsersResponse
+// @Success 200 {string} models.GetAllUsersResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse

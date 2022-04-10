@@ -15,6 +15,11 @@ definitions:
     - login
     - password
     type: object
+  models.SignInResponse:
+    properties:
+      token:
+        type: string
+    type: object
   models.SignUpRequest:
     properties:
       login:
@@ -27,6 +32,13 @@ definitions:
     - login
     - password
     - username
+    type: object
+  models.SignUpResponse:
+    properties:
+      account_id:
+        type: integer
+      user_id:
+        type: integer
     type: object
   models.UpdateUserResponse:
     properties:
@@ -89,9 +101,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: token
+          description: Success login
           schema:
-            type: string
+            $ref: '#/definitions/models.SignInResponse'
         "400":
           description: Bad Request
           schema:
@@ -122,7 +134,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: integer
+            $ref: '#/definitions/models.SignUpResponse'
         "400":
           description: Bad Request
           schema:
@@ -202,6 +214,12 @@ paths:
       - application/json
       description: delete user by id
       operationId: delete-user-by-id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -229,6 +247,12 @@ paths:
       - application/json
       description: get user by id
       operationId: get-user-by-id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
