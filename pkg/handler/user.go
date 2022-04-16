@@ -23,7 +23,7 @@ func (h *Handler) getUserById(c *gin.Context) {
 
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid list id param")
+		newErrorResponse(c, http.StatusBadRequest, "invalid user id param")
 		return
 	}
 
@@ -51,7 +51,7 @@ func (h *Handler) getUserById(c *gin.Context) {
 func (h *Handler) deleteUserById(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid list id param")
+		newErrorResponse(c, http.StatusBadRequest, "invalid user id param")
 		return
 	}
 

@@ -4,30 +4,26 @@ package protobuf;
 
 option go_package = "/proto/account";
 
-import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 service AccountService {
   //ACCOUNT
-  rpc CreateAccountByUserId (CreateAccountRequest) returns (CreateAccountResponse){
-    option(google.api.http) = {
-      post: "/api/v1/account/"
-      body: "*"
-    };
-  }
+  rpc CreateAccountByUserId (CreateAccountRequest) returns (CreateAccountResponse){}
 
-  rpc GetAccountByUserId (GetAccountByUserIdRequest) returns (GetAccountByUserIdResponse){
-    option(google.api.http) = {
-      get: "/api/v1/account/{user_id}"
-      body: "*"
-    };
-  }
+  rpc GetAccountByUserId (GetAccountByUserIdRequest) returns (GetAccountByUserIdResponse){}
 
-  rpc DeleteAccountByUserId (DeleteAccountByUserIdRequest) returns (DeleteAccountByUserIdResponse){
-    option(google.api.http) = {
-      delete: "/api/v1/account/{user_id}"
-      body: "*"
-    };
-  }
+  rpc DeleteAccountByUserId (DeleteAccountByUserIdRequest) returns (DeleteAccountByUserIdResponse){}
+
+
+  //POST
+  rpc CreatePost (CreatePostRequest) returns (CreatePostResponse){}
+
+  rpc DeletePostById (DeletePostByIdRequest) returns (DeletePostByIdResponse){}
+
+  rpc GetPostById (GetPostByIdRequest) returns (GetPostByIdResponse){}
+
+  rpc GetPostsByUserId (GetUserPostsRequest) returns (GetUserPostsResponse){}
+
 }
 
 message CreateAccountRequest{
@@ -57,4 +53,55 @@ message DeleteAccountByUserIdResponse{
 message Account{
   int64 id = 1;
   int64 user_id = 2;
+  string created_at = 3;
+}
+
+//POSTS
+
+message CreatePostRequest{
+  Post post = 1;
+}
+
+message CreatePostResponse{
+  int64 id = 1;
+}
+
+message DeletePostByIdRequest{
+  int64 id = 1;
+}
+
+message DeletePostByIdResponse{
+  string message = 1;
+}
+
+message GetPostByIdRequest{
+  int64 id = 1;
+}
+
+message GetPostByIdResponse{
+  Post post = 1;
+}
+
+message GetUserPostsRequest{
+  int64 user_id = 1;
+}
+
+message GetUserPostsResponse{
+  repeated Post posts = 1;
+}
+
+message Post {
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  string created_at = 4;
+  string updated_at = 5;
+  repeated Image images = 6;
+  int64 account_id = 7;
+}
+
+message Image{
+  int64 id = 1;
+  string link = 2;
+  int64 post_id = 3;
 }

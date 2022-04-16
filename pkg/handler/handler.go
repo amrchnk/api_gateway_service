@@ -30,12 +30,17 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			api.POST("/logout", h.logOut)
 		}
 
-		user := v1.Group("/users",h.userIdentity)
+		user := v1.Group("/users", h.userIdentity)
 		{
-			user.GET("/:id",h.AdminIdentity, h.getUserById)
-			user.GET("/",h.AdminIdentity, h.getAllUsers)
-			user.DELETE("/:id",h.AdminIdentity, h.deleteUserById)
-			user.PUT("/",h.updateUser)
+			user.GET("/:id", h.AdminIdentity, h.getUserById)
+			user.GET("/", h.AdminIdentity, h.getAllUsers)
+			user.DELETE("/:id", h.AdminIdentity, h.deleteUserById)
+			user.PUT("/", h.updateUser)
+		}
+
+		account := v1.Group("/account", h.userIdentity,h.AdminIdentity)
+		{
+			account.GET(":id",h.getAccountByUserId)
 		}
 	}
 

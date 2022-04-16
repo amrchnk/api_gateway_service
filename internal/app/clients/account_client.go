@@ -3,8 +3,10 @@ package clients
 import (
 	"context"
 	"fmt"
+	"github.com/amrchnk/api-gateway/pkg/models"
 	account "github.com/amrchnk/api-gateway/proto/account"
 	"github.com/spf13/viper"
+	"time"
 )
 
 type AccountClient struct {
@@ -16,6 +18,8 @@ var accountClientConn = &AccountClient{}
 func AccountClientExecutor() *AccountClient {
 	return accountClientConn
 }
+
+//ACCOUNT
 
 func InitAccountClient(ctx context.Context) {
 	conn := GRPCClientConnection(ctx, fmt.Sprintf("localhost:%s", viper.GetString("api.accountGrpcPort")))
@@ -30,10 +34,24 @@ func (ac *AccountClient) CreateAccountFunc(ctx context.Context, userId int64) (i
 	return res.AccountId, err
 }
 
-func (ac *AccountClient) DeleteAccountFunc(ctx context.Context, userId int64) (string, error) {
+func (ac *AccountClient) DeleteAccountByUserIdFunc(ctx context.Context, userId int64) (string, error) {
 	res, err := ac.DeleteAccountByUserId(ctx, &account.DeleteAccountByUserIdRequest{UserId: userId})
 	if err != nil {
 		return "", err
 	}
 	return res.Message, err
+}
+
+func (ac *AccountClient) GetAccountByUserIdFunc(ctx context.Context, userId int64) (models.Account, error) {
+	res, err := ac.GetAccountByUserId(ctx, &account.GetAccountByUserIdRequest{UserId: userId})
+	if err != nil {
+		return models.Account{}, err
+	}
+	resTime, _ := time.Parse("2006-01-02 15:04:05", res.Account.CreatedAt)
+
+	return models.Account{
+		UserId:    res.Account.UserId,
+		Id:        res.Account.Id,
+		CreatedAt: resTime,
+	}, err
 }

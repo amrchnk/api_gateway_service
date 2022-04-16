@@ -9,6 +9,7 @@ import (
 const (
 	authorizationHeader = "Authorization"
 	userCtx             = "userId"
+	accountCtx          = "accountId"
 	roleCtx             = "roleId"
 )
 
@@ -36,7 +37,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	if err!=nil{
+	if err != nil {
 		return
 	}
 
@@ -44,7 +45,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	c.Set(roleCtx, claims.RoleId)
 }
 
-func (h *Handler)AdminIdentity(c *gin.Context){
+func (h *Handler) AdminIdentity(c *gin.Context) {
 	id, ok := c.Get(roleCtx)
 	if !ok {
 		newErrorResponse(c, http.StatusBadRequest, "role id not found")
@@ -57,7 +58,7 @@ func (h *Handler)AdminIdentity(c *gin.Context){
 		return
 	}
 
-	if idInt!=1 {
+	if idInt != 1 {
 		newErrorResponse(c, http.StatusForbidden, "access denied for this role")
 		return
 	}
