@@ -37,10 +37,13 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
+	account,err:=h.Imp.GetAccountByUserId(c,claims.UserId)
 	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "che..")
 		return
 	}
 
+	c.Set(accountCtx,account.Id)
 	c.Set(userCtx, claims.UserId)
 	c.Set(roleCtx, claims.RoleId)
 }
@@ -62,5 +65,4 @@ func (h *Handler) AdminIdentity(c *gin.Context) {
 		newErrorResponse(c, http.StatusForbidden, "access denied for this role")
 		return
 	}
-
 }

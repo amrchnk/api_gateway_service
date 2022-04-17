@@ -12,5 +12,7 @@ type SignInRequest struct {
 }
 
 type CreatePostRequest struct {
-
+	Title string `json:"title" db:"title" binding:"required"`
+	Description string `json:"description" db:"description"`
+	Images []string `json:"images" binding:"required"`
 }

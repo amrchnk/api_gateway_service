@@ -67,7 +67,7 @@ func (h *Handler) deleteUserById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, msg)
+	newResponse(c, http.StatusOK, msg)
 }
 
 // @Summary Update User fields
@@ -99,7 +99,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, msg)
+	newResponse(c, http.StatusOK, msg)
 }
 
 // @Summary Get all users

@@ -27,7 +27,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			api.POST("/sign-up", h.signUp)
 			api.POST("/sign-in", h.signIn)
-			api.POST("/logout", h.logOut)
 		}
 
 		user := v1.Group("/users", h.userIdentity)
@@ -36,6 +35,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			user.GET("/", h.AdminIdentity, h.getAllUsers)
 			user.DELETE("/:id", h.AdminIdentity, h.deleteUserById)
 			user.PUT("/", h.updateUser)
+		}
+
+		post := v1.Group("/posts", h.userIdentity)
+		{
+			post.POST("/",h.createPost)
+			/*post.GET(":id",h.deletePostById)
+			post.GET(":id",h.getPostById)
+			post.GET(":id",h.getAllUserPosts)*/
 		}
 
 		account := v1.Group("/account", h.userIdentity,h.AdminIdentity)

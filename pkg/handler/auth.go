@@ -78,10 +78,3 @@ func (h *Handler) signIn(c *gin.Context) {
 		Token: token,
 	})
 }
-
-func (h *Handler) logOut(c *gin.Context) {
-	c.Header(authorizationHeader, "")
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "Successfully logout",
-	})
-}

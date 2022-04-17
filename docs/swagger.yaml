@@ -1,9 +1,41 @@
 basePath: /api/v1
 definitions:
-  handler.errorResponse:
+  handler.Response:
     properties:
       message:
         type: string
+      status:
+        type: integer
+    type: object
+  handler.errorResponse:
+    properties:
+      error:
+        type: string
+      status:
+        type: integer
+    type: object
+  models.Account:
+    properties:
+      created-at:
+        type: string
+      id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  models.CreatePostRequest:
+    properties:
+      description:
+        type: string
+      images:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    required:
+    - images
+    - title
     type: object
   models.SignInRequest:
     properties:
@@ -84,6 +116,36 @@ info:
   title: Designers App Swagger API
   version: "1.0"
 paths:
+  /account/:id:
+    get:
+      consumes:
+      - application/json
+      description: get account info by user id
+      operationId: get-account
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Account'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get account info
+      tags:
+      - account
   /auth/sign-in:
     post:
       consumes:
@@ -146,6 +208,37 @@ paths:
       summary: SignUp
       tags:
       - auth
+  /posts/:
+    post:
+      consumes:
+      - application/json
+      description: create post with account id that written in context
+      operationId: create-post
+      parameters:
+      - description: post info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Create post
+      tags:
+      - posts
   /users/:
     get:
       consumes:
