@@ -26,3 +26,13 @@ func (ac *AccountClient) CreatePostFunc(ctx context.Context, post models.Post) (
 	}
 	return res.Id, err
 }
+
+func (ac *AccountClient) DeletePostByIdFunc(ctx context.Context,postId int64)(string,error){
+	req,err:=ac.DeletePostById(ctx,&account.DeletePostByIdRequest{
+		Id: postId,
+	})
+	if err != nil {
+		return "", err
+	}
+	return req.Message,err
+}

@@ -5,6 +5,7 @@ import (
 	"github.com/amrchnk/api-gateway/pkg/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 // @Summary Create post
@@ -53,4 +54,20 @@ func (h *Handler) createPost(c *gin.Context) {
 	}
 
 	newResponse(c,http.StatusOK, fmt.Sprintf("Post with id = %d was created", postId))
+}
+
+func (h *Handler) deletePostById(c *gin.Context) {
+	postId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid post id param")
+		return
+	}
+
+	msg,err:=h.Imp.DeletePostById(c,int64(postId))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	newResponse(c,http.StatusOK,msg)
 }
