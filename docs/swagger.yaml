@@ -37,10 +37,15 @@ definitions:
     - images
     - title
     type: object
+  models.GetAllUserPostsResponse:
+    properties:
+      user_posts:
+        items:
+          $ref: '#/definitions/models.GetPostByIdResponse'
+        type: array
+    type: object
   models.GetPostByIdResponse:
     properties:
-      account_id:
-        type: integer
       created_at:
         type: string
       description:
@@ -313,6 +318,30 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       summary: Get post
+      tags:
+      - posts
+  /posts/user:
+    get:
+      consumes:
+      - application/json
+      description: Get all user post by account id that place in context
+      operationId: get-user-posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetAllUserPostsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get user posts
       tags:
       - posts
   /users/:

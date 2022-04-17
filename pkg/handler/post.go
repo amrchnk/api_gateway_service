@@ -117,8 +117,46 @@ func (h *Handler) getPostById(c *gin.Context) {
 		Description: post.Description,
 		CreatedAt:   post.CreatedAt,
 		Images:      imageLinks,
-		AccountId:   post.AccountId,
 	}
 
 	c.JSON(http.StatusOK, resp)
+}
+
+// @Summary Get user posts
+// @Tags posts
+// @Description Get all user post by account id that place in context
+// @ID get-user-posts
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.GetAllUserPostsResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /posts/user [get]
+func (h *Handler) getAllUserPosts(c *gin.Context) {
+	accountId, _ := c.Get(accountCtx)
+
+	posts, err := h.Imp.GetPostsByAccountId(c, accountId.(int64))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	postsResp := make([]models.GetPostByIdResponse, 0, len(posts))
+	if len(posts) != 0 {
+		for _, post := range posts {
+			imageLinks := make([]string, 0, len(post.Images))
+			for _, image := range post.Images {
+				imageLinks = append(imageLinks, image.Link)
+			}
+			postsResp = append(postsResp, models.GetPostByIdResponse{
+				Id:          post.Id,
+				Title:       post.Title,
+				Description: post.Description,
+				Images:      imageLinks,
+				CreatedAt:   post.CreatedAt,
+			})
+		}
+	}
+	c.JSON(http.StatusOK,models.GetAllUserPostsResponse{
+		Posts: postsResp,
+	})
 }

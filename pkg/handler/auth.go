@@ -45,7 +45,7 @@ func (h *Handler) signUp(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.SignUpResponse{
 		AccountId: accountId,
-		UserId: id,
+		UserId:    id,
 	})
 }
 

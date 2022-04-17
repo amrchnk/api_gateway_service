@@ -5,19 +5,19 @@ import (
 )
 
 type Response struct {
-	Status int `json:"status"`
+	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
 
 func newResponse(c *gin.Context, statusCode int, message string) {
-	c.AbortWithStatusJSON(statusCode, Response{Status:statusCode,Message: message})
+	c.AbortWithStatusJSON(statusCode, Response{Status: statusCode, Message: message})
 }
 
 type errorResponse struct {
-	Status int `json:"status"`
-	Error string `json:"error"`
+	Status int    `json:"status"`
+	Error  string `json:"error"`
 }
 
 func newErrorResponse(c *gin.Context, statusCode int, error string) {
-	c.AbortWithStatusJSON(statusCode, errorResponse{Status:statusCode,Error: error})
+	c.AbortWithStatusJSON(statusCode, errorResponse{Status: statusCode, Error: error})
 }

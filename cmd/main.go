@@ -36,15 +36,15 @@ func init() {
 
 // @host      localhost:8000
 // @BasePath /api/v1
-func main(){
-	ctx:=context.Background()
+func main() {
+	ctx := context.Background()
 	clients.InitAuthClient(ctx)
 	clients.InitAccountClient(ctx)
 
-	authService:=service.NewAuthService(clients.AuthClientExecutor())
-	accountService:=service.NewAccountService(clients.AccountClientExecutor())
+	authService := service.NewAuthService(clients.AuthClientExecutor())
+	accountService := service.NewAccountService(clients.AccountClientExecutor())
 
-	GwService:=service.NewApiGWService(authService,accountService)
+	GwService := service.NewApiGWService(authService, accountService)
 	handlers := handler.NewHandler(GwService)
 
 	srv := new(design_app.Server)
@@ -54,7 +54,7 @@ func main(){
 		}
 	}()
 
-	log.Printf("App Started at the port %s",viper.GetString("port"))
+	log.Printf("App Started at the port %s", viper.GetString("port"))
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)

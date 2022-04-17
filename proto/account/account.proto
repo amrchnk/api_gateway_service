@@ -22,7 +22,7 @@ service AccountService {
 
   rpc GetPostById (GetPostByIdRequest) returns (GetPostByIdResponse){}
 
-  rpc GetPostsByUserId (GetUserPostsRequest) returns (GetUserPostsResponse){}
+  rpc GetPostsByAccountId (GetUserPostsRequest) returns (GetUserPostsResponse){}
 
 }
 
@@ -53,7 +53,7 @@ message DeleteAccountByUserIdResponse{
 message Account{
   int64 id = 1;
   int64 user_id = 2;
-  string created_at = 3;
+  string created_at=3;
 }
 
 //POSTS
@@ -83,7 +83,7 @@ message GetPostByIdResponse{
 }
 
 message GetUserPostsRequest{
-  int64 user_id = 1;
+  int64 account_id = 1;
 }
 
 message GetUserPostsResponse{

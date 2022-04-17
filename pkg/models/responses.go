@@ -24,10 +24,13 @@ type GetAllUsersResponse struct {
 }
 
 type GetPostByIdResponse struct {
-	Id int64 `json:"id" db:"id"`
-	Title string `json:"title" db:"title"`
-	Description string `json:"description" db:"description"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
-	Images []string `json:"images"`
-	AccountId int64 `json:"account_id" db:"account_id"`
+	Id          int64     `json:"id" db:"id"`
+	Title       string    `json:"title" db:"title"`
+	Description string    `json:"description" db:"description"`
+	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	Images      []string  `json:"images"`
+}
+
+type GetAllUserPostsResponse struct {
+	Posts []GetPostByIdResponse `json:"user_posts"`
 }

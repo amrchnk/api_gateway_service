@@ -294,6 +294,42 @@ const docTemplate = `{
                 }
             }
         },
+        "/posts/user": {
+            "get": {
+                "description": "Get all user post by account id that place in context",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get user posts",
+                "operationId": "get-user-posts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetAllUserPostsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/": {
             "get": {
                 "description": "get all users",
@@ -546,12 +582,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.GetAllUserPostsResponse": {
+            "type": "object",
+            "properties": {
+                "user_posts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.GetPostByIdResponse"
+                    }
+                }
+            }
+        },
         "models.GetPostByIdResponse": {
             "type": "object",
             "properties": {
-                "account_id": {
-                    "type": "integer"
-                },
                 "created_at": {
                     "type": "string"
                 },

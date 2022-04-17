@@ -24,16 +24,16 @@ type AuthService struct {
 	auth *clients.AuthClient
 }
 
-func NewAuthService(auth *clients.AuthClient)AuthService{
+func NewAuthService(auth *clients.AuthClient) AuthService {
 	return AuthService{auth: auth}
 }
 
-func (a AuthService) SignUp(ctx context.Context,user models.User)(int64,error){
-	return a.auth.SignUpFunc(ctx,user.Login,user.Password)
+func (a AuthService) SignUp(ctx context.Context, user models.User) (int64, error) {
+	return a.auth.SignUpFunc(ctx, user.Login, user.Password)
 }
 
-func (a AuthService) SignIn(ctx context.Context, login,password string) (string, error){
-	resp,err:=a.auth.SignInFunc(ctx,login,password)
+func (a AuthService) SignIn(ctx context.Context, login, password string) (string, error) {
+	resp, err := a.auth.SignInFunc(ctx, login, password)
 	if err != nil {
 		return "", err
 	}
@@ -70,19 +70,18 @@ func (a AuthService) ParseToken(accessToken string) (*tokenClaims, error) {
 	return claims, nil
 }
 
-func (a AuthService) GetUserById(ctx context.Context, id int64) (models.User, error){
-	return a.auth.GetUserByIdFunc(ctx,id)
+func (a AuthService) GetUserById(ctx context.Context, id int64) (models.User, error) {
+	return a.auth.GetUserByIdFunc(ctx, id)
 }
 
-func (a AuthService) DeleteUserById(ctx context.Context, id int64) (string, error){
-	return a.auth.DeleteUserByIdFunc(ctx,id)
+func (a AuthService) DeleteUserById(ctx context.Context, id int64) (string, error) {
+	return a.auth.DeleteUserByIdFunc(ctx, id)
 }
 
-func (a AuthService) GetAllUsers(ctx context.Context)([]models.User,error){
+func (a AuthService) GetAllUsers(ctx context.Context) ([]models.User, error) {
 	return a.auth.GetAllUsersFunc(ctx)
 }
 
-func (a AuthService)UpdateUser(ctx context.Context, user models.UpdateUserResponse) (string, error){
+func (a AuthService) UpdateUser(ctx context.Context, user models.UpdateUserResponse) (string, error) {
 	return a.auth.UpdateUserFunc(ctx, user)
 }
-

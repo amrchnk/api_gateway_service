@@ -9,11 +9,11 @@ import (
 	"time"
 )
 
-func GRPCClientConnection(ctx context.Context, dsn string) *grpc.ClientConn{
-	connectionCtx,cancel:=context.WithTimeout(ctx,time.Second*5)
+func GRPCClientConnection(ctx context.Context, dsn string) *grpc.ClientConn {
+	connectionCtx, cancel := context.WithTimeout(ctx, time.Second*5)
 	defer cancel()
 
-	conn,err:=grpc.DialContext(
+	conn, err := grpc.DialContext(
 		connectionCtx,
 		dsn,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -27,4 +27,3 @@ func GRPCClientConnection(ctx context.Context, dsn string) *grpc.ClientConn{
 	}
 	return conn
 }
-

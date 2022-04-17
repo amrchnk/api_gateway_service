@@ -50,11 +50,13 @@ func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (mod
 	resTime, _ := time.Parse("2006-01-02 15:04:05", req.Post.CreatedAt)
 
 	images := make([]models.Image, 0, len(req.Post.Images))
-	for i := range req.Post.Images {
-		image := models.Image{
-			Link: req.Post.Images[i].Link,
+	for _, image := range req.Post.Images {
+		imageResp := models.Image{
+			Id:     image.Id,
+			Link:   image.Link,
+			PostId: image.PostId,
 		}
-		images = append(images, image)
+		images = append(images, imageResp)
 	}
 
 	post := models.Post{
@@ -67,4 +69,38 @@ func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (mod
 	}
 
 	return post, err
+}
+
+func (ac *AccountClient) GetPostsByAccountIdFunc(ctx context.Context, accountId int64) ([]models.Post, error) {
+	req, err := ac.GetPostsByAccountId(ctx, &account.GetUserPostsRequest{
+		AccountId: accountId,
+	})
+
+	if err != nil {
+		return []models.Post{}, err
+	}
+
+	posts := make([]models.Post, 0, len(req.Posts))
+	for _, post := range req.Posts {
+		images := make([]models.Image, 0, len(post.Images))
+		for _, image := range post.Images {
+			images = append(images, models.Image{
+				Id:     image.Id,
+				Link:   image.Link,
+				PostId: image.PostId,
+			})
+		}
+
+		resTime, _ := time.Parse("2006-01-02 15:04:05", post.CreatedAt)
+		postResp := models.Post{
+			Id:          post.Id,
+			Title:       post.Title,
+			Description: post.Description,
+			CreatedAt:   resTime,
+			Images:      images,
+		}
+		posts = append(posts, postResp)
+	}
+
+	return posts, err
 }

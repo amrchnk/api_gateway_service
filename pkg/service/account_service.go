@@ -17,13 +17,13 @@ func NewAccountService(account *clients.AccountClient) AccountService {
 //ACCOUNT
 
 func (a AccountService) CreateAccount(ctx context.Context, userId int64) (int64, error) {
-	return a.account.CreateAccountFunc(ctx,userId)
+	return a.account.CreateAccountFunc(ctx, userId)
 }
 
 func (a AccountService) DeleteAccount(ctx context.Context, userId int64) (string, error) {
-	return a.account.DeleteAccountByUserIdFunc(ctx,userId)
+	return a.account.DeleteAccountByUserIdFunc(ctx, userId)
 }
 
-func (a AccountService) GetAccountByUserId(ctx context.Context, userId int64)(models.Account, error){
-	return a.account.GetAccountByUserIdFunc(ctx,userId)
+func (a AccountService) GetAccountByUserId(ctx context.Context, userId int64) (models.Account, error) {
+	return a.account.GetAccountByUserIdFunc(ctx, userId)
 }

@@ -41,8 +41,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			post.POST("/", h.createPost)
 			post.DELETE(":id", h.deletePostById)
-			post.GET(":id",h.getPostById)
-			/*post.GET(":id",h.getAllUserPosts)*/
+			post.GET(":id", h.getPostById)
+			post.GET("/user", h.getAllUserPosts)
 		}
 
 		account := v1.Group("/account", h.userIdentity, h.AdminIdentity)
