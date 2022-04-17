@@ -37,6 +37,23 @@ definitions:
     - images
     - title
     type: object
+  models.GetPostByIdResponse:
+    properties:
+      account_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      images:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
   models.SignInRequest:
     properties:
       login:
@@ -213,7 +230,7 @@ paths:
       consumes:
       - application/json
       description: create post with account id that written in context
-      operationId: create-post
+      operationId: delete-post
       parameters:
       - description: post info
         in: body
@@ -237,6 +254,65 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       summary: Create post
+      tags:
+      - posts
+  /posts/:id:
+    delete:
+      consumes:
+      - application/json
+      description: delete post by post id
+      operationId: create-post
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Delete post
+      tags:
+      - posts
+    get:
+      consumes:
+      - application/json
+      description: Get post by post id
+      operationId: get-post
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetPostByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get post
       tags:
       - posts
   /users/:

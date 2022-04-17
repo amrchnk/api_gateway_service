@@ -11,7 +11,7 @@ import (
 // @Summary Create post
 // @Tags posts
 // @Description create post with account id that written in context
-// @ID create-post
+// @ID delete-post
 // @Accept  json
 // @Produce  json
 // @Param input body models.CreatePostRequest true "post info"
@@ -53,21 +53,72 @@ func (h *Handler) createPost(c *gin.Context) {
 		return
 	}
 
-	newResponse(c,http.StatusOK, fmt.Sprintf("Post with id = %d was created", postId))
+	newResponse(c, http.StatusOK, fmt.Sprintf("Post with id = %d was created", postId))
 }
 
+// @Summary Delete post
+// @Tags posts
+// @Description delete post by post id
+// @ID create-post
+// @Accept  json
+// @Produce  json
+// @Param id   path int64  true  "Post ID"
+// @Success 200 {object} Response
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /posts/:id [delete]
 func (h *Handler) deletePostById(c *gin.Context) {
 	postId, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid post id param")
-		return
-	}
-
-	msg,err:=h.Imp.DeletePostById(c,int64(postId))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	newResponse(c,http.StatusOK,msg)
+	msg, err := h.Imp.DeletePostById(c, int64(postId))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	newResponse(c, http.StatusOK, msg)
+}
+
+// @Summary Get post
+// @Tags posts
+// @Description Get post by post id
+// @ID get-post
+// @Accept  json
+// @Produce  json
+// @Param id   path int64  true  "Post ID"
+// @Success 200 {object} models.GetPostByIdResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /posts/:id [get]
+func (h *Handler) getPostById(c *gin.Context) {
+	postId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	post, err := h.Imp.GetPostById(c, int64(postId))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	imageLinks := make([]string, 0, len(post.Images))
+	for _, image := range post.Images {
+		imageLinks = append(imageLinks, image.Link)
+	}
+
+	resp := models.GetPostByIdResponse{
+		Id:          post.Id,
+		Title:       post.Title,
+		Description: post.Description,
+		CreatedAt:   post.CreatedAt,
+		Images:      imageLinks,
+		AccountId:   post.AccountId,
+	}
+
+	c.JSON(http.StatusOK, resp)
 }

@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type SignUpResponse struct {
 	UserId    int64 `json:"user_id"`
 	AccountId int64 `json:"account_id"`
@@ -19,4 +21,13 @@ type UpdateUserResponse struct {
 
 type GetAllUsersResponse struct {
 	Data []User `json:"data"`
+}
+
+type GetPostByIdResponse struct {
+	Id int64 `json:"id" db:"id"`
+	Title string `json:"title" db:"title"`
+	Description string `json:"description" db:"description"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	Images []string `json:"images"`
+	AccountId int64 `json:"account_id" db:"account_id"`
 }
