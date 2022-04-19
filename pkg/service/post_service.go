@@ -17,6 +17,6 @@ func (a AccountService) GetPostById(ctx context.Context, postId int64) (models.P
 	return a.account.GetPostByIdFunc(ctx, postId)
 }
 
-func (a AccountService) GetPostsByAccountId(ctx context.Context, accountId int64) ([]models.Post, error) {
-	return a.account.GetPostsByAccountIdFunc(ctx,accountId)
+func (a AccountService) GetPostsByUserId(ctx context.Context, userId int64) ([]models.Post, error) {
+	return a.account.GetPostsByUserIdFunc(ctx,userId)
 }

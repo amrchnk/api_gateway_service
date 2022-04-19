@@ -71,9 +71,9 @@ func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (mod
 	return post, err
 }
 
-func (ac *AccountClient) GetPostsByAccountIdFunc(ctx context.Context, accountId int64) ([]models.Post, error) {
-	req, err := ac.GetPostsByAccountId(ctx, &account.GetUserPostsRequest{
-		AccountId: accountId,
+func (ac *AccountClient) GetPostsByUserIdFunc(ctx context.Context, userId int64) ([]models.Post, error) {
+	req, err := ac.GetPostsByUserId(ctx, &account.GetUserPostsRequest{
+		UserId: userId,
 	})
 
 	if err != nil {

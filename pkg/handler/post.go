@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/amrchnk/api-gateway/pkg/models"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -124,19 +125,26 @@ func (h *Handler) getPostById(c *gin.Context) {
 
 // @Summary Get user posts
 // @Tags posts
-// @Description Get all user post by account id that place in context
+// @Description Get all user post by user id
 // @ID get-user-posts
 // @Accept  json
+// @Param id   path int64  true  "User ID"
 // @Produce  json
 // @Success 200 {object} models.GetAllUserPostsResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
-// @Router /posts/user [get]
+// @Router /posts/users/:id [get]
 func (h *Handler) getAllUserPosts(c *gin.Context) {
-	accountId, _ := c.Get(accountCtx)
-
-	posts, err := h.Imp.GetPostsByAccountId(c, accountId.(int64))
+	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		log.Fatalf("[ERROR]: %v",err)
+		return
+	}
+
+	posts, err := h.Imp.GetPostsByUserId(c, int64(userId))
+	if err != nil {
+		log.Fatalf("[ERROR]: %v",err)
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

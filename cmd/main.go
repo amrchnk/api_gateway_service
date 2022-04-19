@@ -41,6 +41,8 @@ func main() {
 	clients.InitAuthClient(ctx)
 	clients.InitAccountClient(ctx)
 
+	//cld,_:= cloudinary.NewFromParams(os.Getenv(), "123456789012345", "abcdeghijklmnopqrstuvwxyz12")
+
 	authService := service.NewAuthService(clients.AuthClientExecutor())
 	accountService := service.NewAccountService(clients.AccountClientExecutor())
 

@@ -42,12 +42,17 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			post.POST("/", h.createPost)
 			post.DELETE(":id", h.deletePostById)
 			post.GET(":id", h.getPostById)
-			post.GET("/user", h.getAllUserPosts)
+			post.GET("/users/:id", h.getAllUserPosts)
 		}
 
 		account := v1.Group("/account", h.userIdentity, h.AdminIdentity)
 		{
 			account.GET(":id", h.getAccountByUserId)
+		}
+
+		files := v1.Group("/files", h.userIdentity)
+		{
+			files.POST("/upload", h.uploadFileInCloudinary)
 		}
 	}
 

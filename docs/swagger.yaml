@@ -320,12 +320,18 @@ paths:
       summary: Get post
       tags:
       - posts
-  /posts/user:
+  /posts/users/:id:
     get:
       consumes:
       - application/json
-      description: Get all user post by account id that place in context
+      description: Get all user post by user id
       operationId: get-user-posts
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:

@@ -294,9 +294,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/posts/user": {
+        "/posts/users/:id": {
             "get": {
-                "description": "Get all user post by account id that place in context",
+                "description": "Get all user post by user id",
                 "consumes": [
                     "application/json"
                 ],
@@ -308,6 +308,15 @@ const docTemplate = `{
                 ],
                 "summary": "Get user posts",
                 "operationId": "get-user-posts",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
