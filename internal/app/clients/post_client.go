@@ -98,6 +98,7 @@ func (ac *AccountClient) GetPostsByUserIdFunc(ctx context.Context, userId int64)
 			Description: post.Description,
 			CreatedAt:   resTime,
 			Images:      images,
+			AccountId: post.AccountId,
 		}
 		posts = append(posts, postResp)
 	}

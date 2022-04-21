@@ -138,13 +138,13 @@ func (h *Handler) getAllUserPosts(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		log.Fatalf("[ERROR]: %v",err)
+		log.Fatalf("[ERROR]: %v", err)
 		return
 	}
 
 	posts, err := h.Imp.GetPostsByUserId(c, int64(userId))
 	if err != nil {
-		log.Fatalf("[ERROR]: %v",err)
+		log.Fatalf("[ERROR]: %v", err)
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -164,7 +164,32 @@ func (h *Handler) getAllUserPosts(c *gin.Context) {
 			})
 		}
 	}
-	c.JSON(http.StatusOK,models.GetAllUserPostsResponse{
+	c.JSON(http.StatusOK, models.GetAllUserPostsResponse{
 		Posts: postsResp,
 	})
+}
+
+func (h *Handler) getAllUsersPosts(c *gin.Context) {
+	usersPosts := make(map[int64][]models.Post)
+
+	//получить всех юзеров
+	users, err := h.Imp.GetAllUsers(c)
+	if err != nil {
+		log.Fatalf("[ERROR]: %v", err)
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	//если по айди пользователя прилетают посты, пишем в мапу айди пользака как ключ и в значения массив постов
+	for _, user := range users {
+		uPosts, err := h.Imp.GetPostsByUserId(c, user.Id)
+		if err != nil {
+			continue
+		}
+		usersPosts[user.Id] = uPosts
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"users_posts": usersPosts,
+	})
+
 }
