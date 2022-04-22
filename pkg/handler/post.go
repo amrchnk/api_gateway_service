@@ -169,17 +169,25 @@ func (h *Handler) getAllUserPosts(c *gin.Context) {
 	})
 }
 
+// @Summary Get all users posts
+// @Tags posts
+// @Description Get all users posts
+// @ID get-users-posts
+// @Produce  json
+// @Success 200 {object} models.GetAllUsersPostsResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /posts/users/ [get]
 func (h *Handler) getAllUsersPosts(c *gin.Context) {
 	usersPosts := make(map[int64][]models.Post)
 
-	//получить всех юзеров
 	users, err := h.Imp.GetAllUsers(c)
 	if err != nil {
 		log.Fatalf("[ERROR]: %v", err)
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	//если по айди пользователя прилетают посты, пишем в мапу айди пользака как ключ и в значения массив постов
+
 	for _, user := range users {
 		uPosts, err := h.Imp.GetPostsByUserId(c, user.Id)
 		if err != nil {
@@ -188,8 +196,6 @@ func (h *Handler) getAllUsersPosts(c *gin.Context) {
 		usersPosts[user.Id] = uPosts
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"users_posts": usersPosts,
-	})
+	c.JSON(http.StatusOK, models.GetAllUsersPostsResponse{UsersPosts: usersPosts})
 
 }

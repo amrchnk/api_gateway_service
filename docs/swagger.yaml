@@ -44,6 +44,15 @@ definitions:
           $ref: '#/definitions/models.GetPostByIdResponse'
         type: array
     type: object
+  models.GetAllUsersPostsResponse:
+    properties:
+      users_posts:
+        additionalProperties:
+          items:
+            $ref: '#/definitions/models.Post'
+          type: array
+        type: object
+    type: object
   models.GetPostByIdResponse:
     properties:
       created_at:
@@ -58,6 +67,37 @@ definitions:
         type: array
       title:
         type: string
+    type: object
+  models.Image:
+    properties:
+      id:
+        type: integer
+      link:
+        type: string
+      post_id:
+        type: integer
+    required:
+    - link
+    type: object
+  models.Post:
+    properties:
+      account_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      images:
+        items:
+          $ref: '#/definitions/models.Image'
+        type: array
+      title:
+        type: string
+    required:
+    - account_id
+    - title
     type: object
   models.SignInRequest:
     properties:
@@ -318,6 +358,28 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       summary: Get post
+      tags:
+      - posts
+  /posts/users/:
+    get:
+      description: Get all users posts
+      operationId: get-users-posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetAllUsersPostsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get all users posts
       tags:
       - posts
   /posts/users/:id:

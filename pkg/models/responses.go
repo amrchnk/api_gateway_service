@@ -34,3 +34,7 @@ type GetPostByIdResponse struct {
 type GetAllUserPostsResponse struct {
 	Posts []GetPostByIdResponse `json:"user_posts"`
 }
+
+type GetAllUsersPostsResponse struct {
+	UsersPosts map[int64][]Post `json:"users_posts"`
+}

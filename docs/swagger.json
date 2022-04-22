@@ -287,6 +287,39 @@
                 }
             }
         },
+        "/posts/users/": {
+            "get": {
+                "description": "Get all users posts",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get all users posts",
+                "operationId": "get-users-posts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetAllUsersPostsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/posts/users/:id": {
             "get": {
                 "description": "Get all user post by user id",
@@ -595,6 +628,20 @@
                 }
             }
         },
+        "models.GetAllUsersPostsResponse": {
+            "type": "object",
+            "properties": {
+                "users_posts": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/models.Post"
+                        }
+                    }
+                }
+            }
+        },
         "models.GetPostByIdResponse": {
             "type": "object",
             "properties": {
@@ -611,6 +658,53 @@
                     "type": "array",
                     "items": {
                         "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Image": {
+            "type": "object",
+            "required": [
+                "link"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "post_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Post": {
+            "type": "object",
+            "required": [
+                "account_id",
+                "title"
+            ],
+            "properties": {
+                "account_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
                     }
                 },
                 "title": {
