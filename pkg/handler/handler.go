@@ -52,11 +52,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			account.GET(":id", h.getAccountByUserId)
 		}
-
-		files := v1.Group("/files"/*, h.userIdentity*/)
-		{
-			files.POST("/", h.uploadFileInCloudinary)
-		}
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

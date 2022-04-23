@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/amrchnk/api-gateway/pkg/models"
 	"github.com/gin-gonic/gin"
@@ -27,9 +28,39 @@ func (h *Handler) createPost(c *gin.Context) {
 		return
 	}
 
+	form, err := c.MultipartForm()
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	files := form.File["Files"]
+	textData := form.Value["PostInfo"]
+
+	filesInput := make([]models.File, 0, len(files))
+
+	for _, file := range files {
+		osFile, err := file.Open()
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		filesInput = append(filesInput, models.File{File: osFile})
+
+		log.Println(file.Filename)
+	}
+
+	links, err := h.Imp.FilesUpload(accountId.(int64), filesInput)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	var req models.CreatePostRequest
-	if err := c.BindJSON(&req); err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid input body")
+	req.Images = links
+
+	err = json.Unmarshal([]byte(textData[0]), &req)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 

@@ -41,6 +41,6 @@ type IAccountService interface {
 }
 
 type IMediaUpload interface {
-	FilesUpload(files []models.File) ([]string, error)
+	FilesUpload(accountId int64, files []models.File) ([]string, error)
 	//RemoteUpload(url models.Url) (string, error)
 }
