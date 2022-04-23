@@ -18,6 +18,8 @@ func NewHandler(Imp *service.Implementation) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.Default()
+
+	router.MaxMultipartMemory = 8 << 20
 	router.Use(CORSMiddleware())
 
 	docs.SwaggerInfo.BasePath = "/api/v1"
@@ -51,9 +53,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			account.GET(":id", h.getAccountByUserId)
 		}
 
-		files := v1.Group("/files", h.userIdentity)
+		files := v1.Group("/files"/*, h.userIdentity*/)
 		{
-			files.POST("/upload", h.uploadFileInCloudinary)
+			files.POST("/", h.uploadFileInCloudinary)
 		}
 	}
 

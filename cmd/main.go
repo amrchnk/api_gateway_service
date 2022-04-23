@@ -41,12 +41,12 @@ func main() {
 	clients.InitAuthClient(ctx)
 	clients.InitAccountClient(ctx)
 
-	//cld,_:= cloudinary.NewFromParams(os.Getenv(), "123456789012345", "abcdeghijklmnopqrstuvwxyz12")
 
 	authService := service.NewAuthService(clients.AuthClientExecutor())
 	accountService := service.NewAccountService(clients.AccountClientExecutor())
+	mediaService := service.NewMediaUpload()
 
-	GwService := service.NewApiGWService(authService, accountService)
+	GwService := service.NewApiGWService(authService, accountService, mediaService)
 	handlers := handler.NewHandler(GwService)
 
 	srv := new(design_app.Server)
