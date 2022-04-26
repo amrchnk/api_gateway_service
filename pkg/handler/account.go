@@ -39,3 +39,57 @@ func (h *Handler) getAccountByUserId(c *gin.Context) {
 		CreatedAt: account.CreatedAt,
 	})
 }
+
+// @Summary Create account by user id
+// @Tags account
+// @Description create default account with user id from body
+// @ID create-account
+// @Accept  json
+// @Produce  json
+// @Param input body models.UpdateAccountRequest true "account update info"
+// @Success 200 {object} Response
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /account/ [put]
+func (h *Handler) createAccountByUserId(c *gin.Context) {
+	userId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid account id param")
+		return
+	}
+
+	accountId, err := h.Imp.CreateAccount(c, int64(userId))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("Error creating account: %v", err.Error()))
+		return
+	}
+
+	newResponse(c,http.StatusOK,fmt.Sprintf("Account with id = %d was created for user with id =%d",accountId,userId))
+}
+
+// @Summary Update account info
+// @Tags account
+// @Description update account info with data from body
+// @ID update-account
+// @Accept  json
+// @Produce  json
+// @Param id   path int64  true  "User ID"
+// @Success 200 {object} Response
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /account/:id [post]
+func (h *Handler) updateUserAccount(c *gin.Context) {
+	var updateInfo models.UpdateAccountRequest
+	if err := c.BindJSON(&updateInfo); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	msg, err := h.Imp.UpdateAccountByUserId(c, updateInfo)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("Error updating account: %v", err))
+		return
+	}
+
+	newResponse(c, http.StatusOK, msg)
+}

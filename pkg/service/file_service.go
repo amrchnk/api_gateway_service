@@ -24,18 +24,18 @@ func NewCloud() (*cloudinary.Cloudinary, error) {
 	return cld, nil
 }
 
-type Media struct {
+type FileService struct {
 	Cloud *cloudinary.Cloudinary
 }
 
-func NewMediaUpload() Media {
+func NewMediaUpload() FileService {
 	cloud, _ := NewCloud()
-	return Media{
+	return FileService{
 		Cloud: cloud,
 	}
 }
 
-func (m Media) FilesUpload(userId int64, files []models.File) ([]string, error) {
+func (m FileService) FilesUpload(userId int64, files []models.File) ([]string, error) {
 	links := make([]string, 0, len(files))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

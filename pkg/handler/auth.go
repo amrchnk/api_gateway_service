@@ -10,7 +10,7 @@ import (
 // @Summary SignUp
 // @Tags auth
 // @Description create account
-// @ID create-account
+// @ID create-user
 // @Accept  json
 // @Produce  json
 // @Param input body models.SignUpRequest true "account info"

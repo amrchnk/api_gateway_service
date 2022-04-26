@@ -27,3 +27,7 @@ func (a AccountService) DeleteAccount(ctx context.Context, userId int64) (string
 func (a AccountService) GetAccountByUserId(ctx context.Context, userId int64) (models.Account, error) {
 	return a.account.GetAccountByAccountIdFunc(ctx, userId)
 }
+
+func (a AccountService) UpdateAccountByUserId(ctx context.Context, updateInfo models.UpdateAccountRequest) (string, error) {
+	return a.account.UpdateAccountByUserIdFunc(ctx, updateInfo)
+}

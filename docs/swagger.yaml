@@ -20,6 +20,8 @@ definitions:
         type: string
       id:
         type: integer
+      profile_image:
+        type: string
       user_id:
         type: integer
     type: object
@@ -134,6 +136,13 @@ definitions:
       user_id:
         type: integer
     type: object
+  models.UpdateAccountRequest:
+    properties:
+      profile_image:
+        type: string
+      user_id:
+        type: integer
+    type: object
   models.UpdateUserResponse:
     properties:
       id:
@@ -178,6 +187,37 @@ info:
   title: Designers App Swagger API
   version: "1.0"
 paths:
+  /account/:
+    put:
+      consumes:
+      - application/json
+      description: create default account with user id from body
+      operationId: create-account
+      parameters:
+      - description: account update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Create account by user id
+      tags:
+      - account
   /account/:id:
     get:
       consumes:
@@ -206,6 +246,35 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       summary: Get account info
+      tags:
+      - account
+    post:
+      consumes:
+      - application/json
+      description: update account info with data from body
+      operationId: update-account
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Update account info
       tags:
       - account
   /auth/sign-in:
@@ -244,7 +313,7 @@ paths:
       consumes:
       - application/json
       description: create account
-      operationId: create-account
+      operationId: create-user
       parameters:
       - description: account info
         in: body

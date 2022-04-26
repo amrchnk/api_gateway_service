@@ -26,12 +26,12 @@ type AccountServiceClient interface {
 	CreateAccountByUserId(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*CreateAccountResponse, error)
 	GetAccountByUserId(ctx context.Context, in *GetAccountByUserIdRequest, opts ...grpc.CallOption) (*GetAccountByUserIdResponse, error)
 	DeleteAccountByUserId(ctx context.Context, in *DeleteAccountByUserIdRequest, opts ...grpc.CallOption) (*DeleteAccountByUserIdResponse, error)
+	UpdateAccountByUserId(ctx context.Context, in *UpdateAccountByUserIdRequest, opts ...grpc.CallOption) (*UpdateAccountByUserIdResponse, error)
 	//POST
 	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error)
 	DeletePostById(ctx context.Context, in *DeletePostByIdRequest, opts ...grpc.CallOption) (*DeletePostByIdResponse, error)
 	GetPostById(ctx context.Context, in *GetPostByIdRequest, opts ...grpc.CallOption) (*GetPostByIdResponse, error)
 	GetPostsByUserId(ctx context.Context, in *GetUserPostsRequest, opts ...grpc.CallOption) (*GetUserPostsResponse, error)
-	GetAllUsersPosts(ctx context.Context, in *GetAllUsersPostsRequest, opts ...grpc.CallOption) (*GetAllUsersPostsResponse, error)
 }
 
 type accountServiceClient struct {
@@ -63,6 +63,15 @@ func (c *accountServiceClient) GetAccountByUserId(ctx context.Context, in *GetAc
 func (c *accountServiceClient) DeleteAccountByUserId(ctx context.Context, in *DeleteAccountByUserIdRequest, opts ...grpc.CallOption) (*DeleteAccountByUserIdResponse, error) {
 	out := new(DeleteAccountByUserIdResponse)
 	err := c.cc.Invoke(ctx, "/protobuf.AccountService/DeleteAccountByUserId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) UpdateAccountByUserId(ctx context.Context, in *UpdateAccountByUserIdRequest, opts ...grpc.CallOption) (*UpdateAccountByUserIdResponse, error) {
+	out := new(UpdateAccountByUserIdResponse)
+	err := c.cc.Invoke(ctx, "/protobuf.AccountService/UpdateAccountByUserId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -105,15 +114,6 @@ func (c *accountServiceClient) GetPostsByUserId(ctx context.Context, in *GetUser
 	return out, nil
 }
 
-func (c *accountServiceClient) GetAllUsersPosts(ctx context.Context, in *GetAllUsersPostsRequest, opts ...grpc.CallOption) (*GetAllUsersPostsResponse, error) {
-	out := new(GetAllUsersPostsResponse)
-	err := c.cc.Invoke(ctx, "/protobuf.AccountService/GetAllUsersPosts", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // AccountServiceServer is the server API for AccountService service.
 // All implementations must embed UnimplementedAccountServiceServer
 // for forward compatibility
@@ -122,12 +122,12 @@ type AccountServiceServer interface {
 	CreateAccountByUserId(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error)
 	GetAccountByUserId(context.Context, *GetAccountByUserIdRequest) (*GetAccountByUserIdResponse, error)
 	DeleteAccountByUserId(context.Context, *DeleteAccountByUserIdRequest) (*DeleteAccountByUserIdResponse, error)
+	UpdateAccountByUserId(context.Context, *UpdateAccountByUserIdRequest) (*UpdateAccountByUserIdResponse, error)
 	//POST
 	CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error)
 	DeletePostById(context.Context, *DeletePostByIdRequest) (*DeletePostByIdResponse, error)
 	GetPostById(context.Context, *GetPostByIdRequest) (*GetPostByIdResponse, error)
 	GetPostsByUserId(context.Context, *GetUserPostsRequest) (*GetUserPostsResponse, error)
-	GetAllUsersPosts(context.Context, *GetAllUsersPostsRequest) (*GetAllUsersPostsResponse, error)
 	mustEmbedUnimplementedAccountServiceServer()
 }
 
@@ -144,6 +144,9 @@ func (UnimplementedAccountServiceServer) GetAccountByUserId(context.Context, *Ge
 func (UnimplementedAccountServiceServer) DeleteAccountByUserId(context.Context, *DeleteAccountByUserIdRequest) (*DeleteAccountByUserIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAccountByUserId not implemented")
 }
+func (UnimplementedAccountServiceServer) UpdateAccountByUserId(context.Context, *UpdateAccountByUserIdRequest) (*UpdateAccountByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccountByUserId not implemented")
+}
 func (UnimplementedAccountServiceServer) CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePost not implemented")
 }
@@ -155,9 +158,6 @@ func (UnimplementedAccountServiceServer) GetPostById(context.Context, *GetPostBy
 }
 func (UnimplementedAccountServiceServer) GetPostsByUserId(context.Context, *GetUserPostsRequest) (*GetUserPostsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPostsByUserId not implemented")
-}
-func (UnimplementedAccountServiceServer) GetAllUsersPosts(context.Context, *GetAllUsersPostsRequest) (*GetAllUsersPostsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsersPosts not implemented")
 }
 func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
 
@@ -222,6 +222,24 @@ func _AccountService_DeleteAccountByUserId_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AccountServiceServer).DeleteAccountByUserId(ctx, req.(*DeleteAccountByUserIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_UpdateAccountByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAccountByUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).UpdateAccountByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protobuf.AccountService/UpdateAccountByUserId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).UpdateAccountByUserId(ctx, req.(*UpdateAccountByUserIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -298,24 +316,6 @@ func _AccountService_GetPostsByUserId_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountService_GetAllUsersPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllUsersPostsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccountServiceServer).GetAllUsersPosts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protobuf.AccountService/GetAllUsersPosts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).GetAllUsersPosts(ctx, req.(*GetAllUsersPostsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // AccountService_ServiceDesc is the grpc.ServiceDesc for AccountService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -336,6 +336,10 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AccountService_DeleteAccountByUserId_Handler,
 		},
 		{
+			MethodName: "UpdateAccountByUserId",
+			Handler:    _AccountService_UpdateAccountByUserId_Handler,
+		},
+		{
 			MethodName: "CreatePost",
 			Handler:    _AccountService_CreatePost_Handler,
 		},
@@ -350,10 +354,6 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPostsByUserId",
 			Handler:    _AccountService_GetPostsByUserId_Handler,
-		},
-		{
-			MethodName: "GetAllUsersPosts",
-			Handler:    _AccountService_GetAllUsersPosts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

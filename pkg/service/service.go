@@ -8,14 +8,14 @@ import (
 type Implementation struct {
 	IAuthService
 	IAccountService
-	IMediaUpload
+	IFileService
 }
 
-func NewApiGWService(auth AuthService, account AccountService, media Media) *Implementation {
+func NewApiGWService(auth AuthService, account AccountService, media FileService) *Implementation {
 	return &Implementation{
 		IAuthService:    auth,
 		IAccountService: account,
-		IMediaUpload:    media,
+		IFileService:    media,
 	}
 }
 
@@ -33,6 +33,7 @@ type IAccountService interface {
 	CreateAccount(ctx context.Context, userId int64) (int64, error)
 	DeleteAccount(ctx context.Context, userId int64) (string, error)
 	GetAccountByUserId(ctx context.Context, userId int64) (models.Account, error)
+	UpdateAccountByUserId(ctx context.Context, updateInfo models.UpdateAccountRequest) (string, error)
 
 	CreatePost(ctx context.Context, post models.Post) (int64, error)
 	DeletePostById(ctx context.Context, postId int64) (string, error)
@@ -40,7 +41,6 @@ type IAccountService interface {
 	GetPostsByUserId(ctx context.Context, userId int64) ([]models.Post, error)
 }
 
-type IMediaUpload interface {
+type IFileService interface {
 	FilesUpload(accountId int64, files []models.File) ([]string, error)
-	//RemoteUpload(url models.Url) (string, error)
 }
