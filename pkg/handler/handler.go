@@ -52,7 +52,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			account.GET(":id", h.getAccountByUserId, h.AdminIdentity)
 			account.POST(":id",h.createAccountByUserId,h.AdminIdentity)
-			account.PUT("/",h.updateUserAccount)
+			account.PUT("/:id",h.updateUserAccountById)
 		}
 	}
 

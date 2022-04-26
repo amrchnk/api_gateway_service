@@ -20,53 +20,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/account/": {
-            "put": {
-                "description": "create default account with user id from body",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "account"
-                ],
-                "summary": "Create account by user id",
-                "operationId": "create-account",
-                "parameters": [
-                    {
-                        "description": "account update info",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UpdateAccountRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/handler.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/account/:id": {
             "get": {
                 "description": "get account info by user id",
@@ -111,8 +64,8 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "update account info with data from body",
+            "put": {
+                "description": "update user account data",
                 "consumes": [
                     "application/json"
                 ],
@@ -122,15 +75,17 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Update account info",
+                "summary": "Update account by user id",
                 "operationId": "update-account",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "account update info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateAccountRequest"
+                        }
                     }
                 ],
                 "responses": {

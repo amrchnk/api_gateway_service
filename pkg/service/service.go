@@ -42,5 +42,6 @@ type IAccountService interface {
 }
 
 type IFileService interface {
-	FilesUpload(accountId int64, files []models.File) ([]string, error)
+	UploadOneFile(path string, file models.File) (string, error)
+	FilesUpload(path string, files []models.File) ([]string, error)
 }

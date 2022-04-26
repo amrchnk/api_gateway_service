@@ -46,11 +46,11 @@ func (h *Handler) getAccountByUserId(c *gin.Context) {
 // @ID create-account
 // @Accept  json
 // @Produce  json
-// @Param input body models.UpdateAccountRequest true "account update info"
+// @Param id   path int64  true  "User ID"
 // @Success 200 {object} Response
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
-// @Router /account/ [put]
+// @Router /account/:id [put]
 func (h *Handler) createAccountByUserId(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -64,27 +64,44 @@ func (h *Handler) createAccountByUserId(c *gin.Context) {
 		return
 	}
 
-	newResponse(c,http.StatusOK,fmt.Sprintf("Account with id = %d was created for user with id =%d",accountId,userId))
+	newResponse(c, http.StatusOK, fmt.Sprintf("Account with id = %d was created for user with id =%d", accountId, userId))
 }
 
-// @Summary Update account info
+// @Summary Update account by user id
 // @Tags account
-// @Description update account info with data from body
+// @Description update user account data
 // @ID update-account
 // @Accept  json
 // @Produce  json
-// @Param id   path int64  true  "User ID"
+// @Param input body models.UpdateAccountRequest true "account update info"
 // @Success 200 {object} Response
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
-// @Router /account/:id [post]
-func (h *Handler) updateUserAccount(c *gin.Context) {
-	var updateInfo models.UpdateAccountRequest
-	if err := c.BindJSON(&updateInfo); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+// @Router /account/:id [put]
+func (h *Handler) updateUserAccountById(c *gin.Context) {
+	userId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid account id param")
 		return
 	}
 
+	updateInfo := models.UpdateAccountRequest{
+		UserId: int64(userId),
+	}
+
+	file, _, err := c.Request.FormFile("ProfileImage")
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	link, err := h.Imp.UploadOneFile(fmt.Sprintf("design_app/avatars/user%d", userId), models.File{File: file})
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	updateInfo.ProfileImage = link
 	msg, err := h.Imp.UpdateAccountByUserId(c, updateInfo)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("Error updating account: %v", err))

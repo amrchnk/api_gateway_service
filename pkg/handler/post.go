@@ -22,6 +22,12 @@ import (
 // @Failure 500 {object} errorResponse
 // @Router /posts/ [post]
 func (h *Handler) createPost(c *gin.Context) {
+	userId, exist := c.Get(userCtx)
+	if !exist {
+		newResponse(c, http.StatusBadRequest, "user id isn't found in current context!")
+		return
+	}
+
 	accountId, exist := c.Get(accountCtx)
 	if !exist {
 		newResponse(c, http.StatusBadRequest, "account id isn't found in current context!")
@@ -49,7 +55,7 @@ func (h *Handler) createPost(c *gin.Context) {
 		log.Println(file.Filename)
 	}
 
-	links, err := h.Imp.FilesUpload(accountId.(int64), filesInput)
+	links, err := h.Imp.FilesUpload(fmt.Sprintf("user%d",userId), filesInput)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
