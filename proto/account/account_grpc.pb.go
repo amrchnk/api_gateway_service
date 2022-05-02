@@ -31,7 +31,10 @@ type AccountServiceClient interface {
 	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error)
 	DeletePostById(ctx context.Context, in *DeletePostByIdRequest, opts ...grpc.CallOption) (*DeletePostByIdResponse, error)
 	GetPostById(ctx context.Context, in *GetPostByIdRequest, opts ...grpc.CallOption) (*GetPostByIdResponse, error)
+	UpdatePostById(ctx context.Context, in *UpdatePostByIdRequest, opts ...grpc.CallOption) (*UpdatePostByIdResponse, error)
 	GetPostsByUserId(ctx context.Context, in *GetUserPostsRequest, opts ...grpc.CallOption) (*GetUserPostsResponse, error)
+	//IMAGES
+	GetImagesFromPost(ctx context.Context, in *GetImagesFromPostRequest, opts ...grpc.CallOption) (*GetImagesFromPostResponse, error)
 }
 
 type accountServiceClient struct {
@@ -105,9 +108,27 @@ func (c *accountServiceClient) GetPostById(ctx context.Context, in *GetPostByIdR
 	return out, nil
 }
 
+func (c *accountServiceClient) UpdatePostById(ctx context.Context, in *UpdatePostByIdRequest, opts ...grpc.CallOption) (*UpdatePostByIdResponse, error) {
+	out := new(UpdatePostByIdResponse)
+	err := c.cc.Invoke(ctx, "/protobuf.AccountService/UpdatePostById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *accountServiceClient) GetPostsByUserId(ctx context.Context, in *GetUserPostsRequest, opts ...grpc.CallOption) (*GetUserPostsResponse, error) {
 	out := new(GetUserPostsResponse)
 	err := c.cc.Invoke(ctx, "/protobuf.AccountService/GetPostsByUserId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) GetImagesFromPost(ctx context.Context, in *GetImagesFromPostRequest, opts ...grpc.CallOption) (*GetImagesFromPostResponse, error) {
+	out := new(GetImagesFromPostResponse)
+	err := c.cc.Invoke(ctx, "/protobuf.AccountService/GetImagesFromPost", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +148,10 @@ type AccountServiceServer interface {
 	CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error)
 	DeletePostById(context.Context, *DeletePostByIdRequest) (*DeletePostByIdResponse, error)
 	GetPostById(context.Context, *GetPostByIdRequest) (*GetPostByIdResponse, error)
+	UpdatePostById(context.Context, *UpdatePostByIdRequest) (*UpdatePostByIdResponse, error)
 	GetPostsByUserId(context.Context, *GetUserPostsRequest) (*GetUserPostsResponse, error)
+	//IMAGES
+	GetImagesFromPost(context.Context, *GetImagesFromPostRequest) (*GetImagesFromPostResponse, error)
 	mustEmbedUnimplementedAccountServiceServer()
 }
 
@@ -156,8 +180,14 @@ func (UnimplementedAccountServiceServer) DeletePostById(context.Context, *Delete
 func (UnimplementedAccountServiceServer) GetPostById(context.Context, *GetPostByIdRequest) (*GetPostByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPostById not implemented")
 }
+func (UnimplementedAccountServiceServer) UpdatePostById(context.Context, *UpdatePostByIdRequest) (*UpdatePostByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePostById not implemented")
+}
 func (UnimplementedAccountServiceServer) GetPostsByUserId(context.Context, *GetUserPostsRequest) (*GetUserPostsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPostsByUserId not implemented")
+}
+func (UnimplementedAccountServiceServer) GetImagesFromPost(context.Context, *GetImagesFromPostRequest) (*GetImagesFromPostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetImagesFromPost not implemented")
 }
 func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
 
@@ -298,6 +328,24 @@ func _AccountService_GetPostById_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountService_UpdatePostById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePostByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).UpdatePostById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protobuf.AccountService/UpdatePostById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).UpdatePostById(ctx, req.(*UpdatePostByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AccountService_GetPostsByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserPostsRequest)
 	if err := dec(in); err != nil {
@@ -312,6 +360,24 @@ func _AccountService_GetPostsByUserId_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AccountServiceServer).GetPostsByUserId(ctx, req.(*GetUserPostsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_GetImagesFromPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetImagesFromPostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).GetImagesFromPost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protobuf.AccountService/GetImagesFromPost",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).GetImagesFromPost(ctx, req.(*GetImagesFromPostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -352,8 +418,16 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AccountService_GetPostById_Handler,
 		},
 		{
+			MethodName: "UpdatePostById",
+			Handler:    _AccountService_UpdatePostById_Handler,
+		},
+		{
 			MethodName: "GetPostsByUserId",
 			Handler:    _AccountService_GetPostsByUserId_Handler,
+		},
+		{
+			MethodName: "GetImagesFromPost",
+			Handler:    _AccountService_GetImagesFromPost_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

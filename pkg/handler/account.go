@@ -36,6 +36,7 @@ func (h *Handler) getAccountByUserId(c *gin.Context) {
 	c.JSON(http.StatusOK, models.Account{
 		Id:        account.Id,
 		UserId:    account.UserId,
+		ProfileImage: account.ProfileImage,
 		CreatedAt: account.CreatedAt,
 	})
 }

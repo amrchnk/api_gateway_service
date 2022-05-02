@@ -37,13 +37,13 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
-	account, err := h.Imp.GetAccountByUserId(c, claims.UserId)
+	/*account, err := h.Imp.GetAccountByUserId(c, claims.UserId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "che..")
 		return
-	}
+	}*/
 
-	c.Set(accountCtx, account.Id)
+	//c.Set(accountCtx, account.Id)
 	c.Set(userCtx, claims.UserId)
 	c.Set(roleCtx, claims.RoleId)
 }

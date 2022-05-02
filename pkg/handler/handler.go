@@ -50,9 +50,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 		account := v1.Group("/account", h.userIdentity)
 		{
-			account.GET(":id", h.getAccountByUserId, h.AdminIdentity)
-			account.POST(":id",h.createAccountByUserId,h.AdminIdentity)
-			account.PUT("/:id",h.updateUserAccountById)
+			account.GET(":id", h.getAccountByUserId)
+			account.POST(":id", h.createAccountByUserId, h.AdminIdentity)
+			account.PUT("/:id", h.updateUserAccountById)
 		}
 	}
 

@@ -19,6 +19,7 @@ func (ac *AccountClient) CreatePostFunc(ctx context.Context, post models.Post) (
 			Title:       post.Title,
 			Description: post.Description,
 			Images:      images,
+			Categories:  post.Categories,
 			AccountId:   post.AccountId,
 		},
 	})
@@ -66,6 +67,7 @@ func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (mod
 		CreatedAt:   resTime,
 		AccountId:   req.Post.AccountId,
 		Images:      images,
+		Categories:  req.Post.Categories,
 	}
 
 	return post, err
@@ -98,7 +100,7 @@ func (ac *AccountClient) GetPostsByUserIdFunc(ctx context.Context, userId int64)
 			Description: post.Description,
 			CreatedAt:   resTime,
 			Images:      images,
-			AccountId: post.AccountId,
+			AccountId:   post.AccountId,
 		}
 		posts = append(posts, postResp)
 	}

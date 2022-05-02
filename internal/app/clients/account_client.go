@@ -42,7 +42,7 @@ func (ac *AccountClient) DeleteAccountByUserIdFunc(ctx context.Context, userId i
 	return res.Message, err
 }
 
-func (ac *AccountClient) GetAccountByAccountIdFunc(ctx context.Context, userId int64) (models.Account, error) {
+func (ac *AccountClient) GetAccountByUserIdFunc(ctx context.Context, userId int64) (models.Account, error) {
 	res, err := ac.GetAccountByUserId(ctx, &account.GetAccountByUserIdRequest{UserId: userId})
 	if err != nil {
 		return models.Account{}, err
@@ -52,6 +52,7 @@ func (ac *AccountClient) GetAccountByAccountIdFunc(ctx context.Context, userId i
 	return models.Account{
 		UserId:    res.Account.UserId,
 		Id:        res.Account.Id,
+		ProfileImage: res.Account.ProfileImage,
 		CreatedAt: resTime,
 	}, err
 }

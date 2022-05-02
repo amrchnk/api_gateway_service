@@ -39,9 +39,13 @@ type IAccountService interface {
 	DeletePostById(ctx context.Context, postId int64) (string, error)
 	GetPostById(ctx context.Context, postId int64) (models.Post, error)
 	GetPostsByUserId(ctx context.Context, userId int64) ([]models.Post, error)
+
+	GetImagesFromPost(ctx context.Context, postId int64) ([]models.Image, error)
 }
 
 type IFileService interface {
 	UploadOneFile(path string, file models.File) (string, error)
 	FilesUpload(path string, files []models.File) ([]string, error)
+	DeleteFiles(links []string) error
+	DeleteFile(publicID string) error
 }

@@ -28,6 +28,7 @@ type GetPostByIdResponse struct {
 	Title       string    `json:"title" db:"title"`
 	Description string    `json:"description" db:"description"`
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	Categories  []int64   `json:"categories,omitempty"`
 	Images      []string  `json:"images"`
 }
 

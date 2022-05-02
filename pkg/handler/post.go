@@ -28,9 +28,9 @@ func (h *Handler) createPost(c *gin.Context) {
 		return
 	}
 
-	accountId, exist := c.Get(accountCtx)
-	if !exist {
-		newResponse(c, http.StatusBadRequest, "account id isn't found in current context!")
+	account, err := h.Imp.GetAccountByUserId(c, userId.(int64))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "error getting user account")
 		return
 	}
 
@@ -50,12 +50,12 @@ func (h *Handler) createPost(c *gin.Context) {
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
-		filesInput = append(filesInput, models.File{File: osFile})
+		filesInput = append(filesInput, models.File{File: osFile, FileName: file.Filename})
 
 		log.Println(file.Filename)
 	}
 
-	links, err := h.Imp.FilesUpload(fmt.Sprintf("user%d",userId), filesInput)
+	links, err := h.Imp.FilesUpload(fmt.Sprintf("user%d", userId), filesInput)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -81,8 +81,9 @@ func (h *Handler) createPost(c *gin.Context) {
 	post := models.Post{
 		Title:       req.Title,
 		Description: req.Description,
-		AccountId:   accountId.(int64),
+		AccountId:   account.Id,
 		Images:      images,
+		Categories:  req.Categories,
 	}
 
 	postId, err := h.Imp.CreatePost(c, post)
@@ -111,9 +112,26 @@ func (h *Handler) deletePostById(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	images, err := h.Imp.GetImagesFromPost(c, int64(postId))
+	if err != nil {
+		log.Printf("[ERROR]: %v", err)
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	var links []string
+	for _, img := range images {
+		links = append(links, img.Link)
+	}
+	err = h.Imp.DeleteFiles(links)
+	if err != nil {
+		log.Printf("[ERROR]: %v", err)
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	msg, err := h.Imp.DeletePostById(c, int64(postId))
 	if err != nil {
+		log.Printf("[ERROR]: %v", err)
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -155,6 +173,7 @@ func (h *Handler) getPostById(c *gin.Context) {
 		Description: post.Description,
 		CreatedAt:   post.CreatedAt,
 		Images:      imageLinks,
+		Categories:  post.Categories,
 	}
 
 	c.JSON(http.StatusOK, resp)
@@ -175,13 +194,13 @@ func (h *Handler) getAllUserPosts(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		log.Fatalf("[ERROR]: %v", err)
+		log.Printf("[ERROR]: %v", err)
 		return
 	}
 
 	posts, err := h.Imp.GetPostsByUserId(c, int64(userId))
 	if err != nil {
-		log.Fatalf("[ERROR]: %v", err)
+		log.Printf("[ERROR]: %v", err)
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -220,7 +239,7 @@ func (h *Handler) getAllUsersPosts(c *gin.Context) {
 
 	users, err := h.Imp.GetAllUsers(c)
 	if err != nil {
-		log.Fatalf("[ERROR]: %v", err)
+		log.Printf("[ERROR]: %v", err)
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

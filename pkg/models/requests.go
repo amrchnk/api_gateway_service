@@ -15,6 +15,7 @@ type CreatePostRequest struct {
 	Title       string   `json:"title" db:"title" binding:"required"`
 	Description string   `json:"description" db:"description"`
 	Images      []string `json:"images" binding:"required"`
+	Categories  []int64  `json:"categories,omitempty"`
 }
 
 type UpdateAccountRequest struct {
