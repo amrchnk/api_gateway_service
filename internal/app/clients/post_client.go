@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/amrchnk/api-gateway/pkg/models"
 	"github.com/amrchnk/api-gateway/proto/account"
+	"log"
 	"time"
 )
 
@@ -30,13 +31,38 @@ func (ac *AccountClient) CreatePostFunc(ctx context.Context, post models.Post) (
 }
 
 func (ac *AccountClient) DeletePostByIdFunc(ctx context.Context, postId int64) (string, error) {
-	req, err := ac.DeletePostById(ctx, &account.DeletePostByIdRequest{
+	resp, err := ac.DeletePostById(ctx, &account.DeletePostByIdRequest{
 		Id: postId,
 	})
 	if err != nil {
+		log.Printf("[ERROR]: %v", err)
 		return "", err
 	}
-	return req.Message, err
+	return resp.Message, err
+}
+
+func (ac *AccountClient) UpdatePostFunc(ctx context.Context, post models.Post) (string, error) {
+	images := make([]*account.Image, 0, len(post.Images))
+	for _, image := range post.Images {
+		images = append(images, &account.Image{
+			Link: image.Link,
+		})
+	}
+	resp, err := ac.UpdatePostById(ctx, &account.UpdatePostByIdRequest{
+		Post: &account.Post{
+			Id:          post.Id,
+			Title:       post.Title,
+			Categories:  post.Categories,
+			Description: post.Description,
+			Images:      images,
+		},
+	})
+	if err != nil {
+		log.Printf("[ERROR]: %v", err)
+		return "", err
+	}
+
+	return resp.Message, err
 }
 
 func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (models.Post, error) {
@@ -45,6 +71,7 @@ func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (mod
 	})
 
 	if err != nil {
+		log.Printf("[ERROR]: %v", err)
 		return models.Post{}, err
 	}
 
@@ -106,4 +133,32 @@ func (ac *AccountClient) GetPostsByUserIdFunc(ctx context.Context, userId int64)
 	}
 
 	return posts, err
+}
+
+func (ac *AccountClient) GetAllUsersPostsFunc(ctx context.Context, request models.GetAllUsersPostsRequest) ([]models.GetAllUsersPosts, error) {
+	resp, err := ac.GetAllUsersPosts(ctx, &account.GetAllUsersPostsRequest{
+		Limit:   request.Limit,
+		Offset:  request.Offset,
+		Sorting: request.Sorting,
+	})
+	if err != nil {
+		log.Printf("[ERROR]: %v", err)
+		return nil, err
+	}
+
+	posts := make([]models.GetAllUsersPosts, 0, len(resp.Posts))
+	for _, post := range resp.Posts {
+		resTime, _ := time.Parse("2006-01-02 15:04:05", post.CreatedAt)
+		posts = append(posts, models.GetAllUsersPosts{
+			Id:          post.Id,
+			UserId:      post.UserId,
+			Images:      post.Images,
+			Categories:  post.Categories,
+			CreatedAt:   resTime,
+			Title:       post.Title,
+			Description: post.Description,
+		})
+	}
+
+	return posts, nil
 }

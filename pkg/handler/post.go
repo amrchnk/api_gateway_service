@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/amrchnk/api-gateway/pkg/models"
@@ -112,17 +113,8 @@ func (h *Handler) deletePostById(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	images, err := h.Imp.GetImagesFromPost(c, int64(postId))
-	if err != nil {
-		log.Printf("[ERROR]: %v", err)
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	var links []string
-	for _, img := range images {
-		links = append(links, img.Link)
-	}
-	err = h.Imp.DeleteFiles(links)
+
+	err = DeletePostImages(h, c, int64(postId))
 	if err != nil {
 		log.Printf("[ERROR]: %v", err)
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -137,6 +129,22 @@ func (h *Handler) deletePostById(c *gin.Context) {
 	}
 
 	newResponse(c, http.StatusOK, msg)
+}
+func DeletePostImages(h *Handler, ctx context.Context, postId int64) error {
+	images, err := h.Imp.GetImagesFromPost(ctx, postId)
+	if err != nil {
+		return err
+	}
+	var links []string
+	for _, img := range images {
+		links = append(links, img.Link)
+	}
+	err = h.Imp.DeleteFiles(links)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @Summary Get post
@@ -178,6 +186,30 @@ func (h *Handler) getPostById(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+/*func (h *Handler) updatePostById(c *gin.Context) {
+	postId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		log.Printf("[ERROR]: %v", err)
+		return
+	}
+
+	var request models.Post
+	request.Id = int64(postId)
+	if err := c.BindJSON(&request); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	msg, err := h.Imp.UpdatePost(c, request)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	newResponse(c, http.StatusOK, msg)
+}*/
 
 // @Summary Get user posts
 // @Tags posts
@@ -229,29 +261,42 @@ func (h *Handler) getAllUserPosts(c *gin.Context) {
 // @Tags posts
 // @Description Get all users posts
 // @ID get-users-posts
+// @Param input body models.GetAllUsersPostsRequest true "params for partition"
 // @Produce  json
-// @Success 200 {object} models.GetAllUsersPostsResponse
+// @Success 200 {array} models.GetAllUsersPosts
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /posts/users/ [get]
 func (h *Handler) getAllUsersPosts(c *gin.Context) {
-	usersPosts := make(map[int64][]models.Post)
+	var request models.GetAllUsersPostsRequest
+	if err := c.BindJSON(&request); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
 
-	users, err := h.Imp.GetAllUsers(c)
+	if request.Limit == 0 {
+		request.Limit = 10
+	}
+
+	posts, err := h.Imp.GetAllUsersPosts(c, request)
 	if err != nil {
 		log.Printf("[ERROR]: %v", err)
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	for _, user := range users {
-		uPosts, err := h.Imp.GetPostsByUserId(c, user.Id)
+	for index := range posts {
+		userInfo, err := h.Imp.GetUserById(c, posts[index].UserId)
 		if err != nil {
-			continue
+			log.Printf("[ERROR]: %v", err)
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
 		}
-		usersPosts[user.Id] = uPosts
+
+		posts[index].Username = userInfo.Username
 	}
 
-	c.JSON(http.StatusOK, models.GetAllUsersPostsResponse{UsersPosts: usersPosts})
-
+	c.JSON(http.StatusOK, models.GetAllUsersPostsResponse{
+		Posts: posts,
+	})
 }
