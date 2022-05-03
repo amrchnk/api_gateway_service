@@ -52,19 +52,6 @@ func (ac *AccountClient) GetAccountByUserIdFunc(ctx context.Context, userId int6
 	return models.Account{
 		UserId:    res.Account.UserId,
 		Id:        res.Account.Id,
-		ProfileImage: res.Account.ProfileImage,
 		CreatedAt: resTime,
 	}, err
-}
-
-func (ac *AccountClient) UpdateAccountByUserIdFunc(ctx context.Context, req models.UpdateAccountRequest) (string, error) {
-	msg, err := ac.UpdateAccountByUserId(ctx, &account.UpdateAccountByUserIdRequest{NewInfo: &account.Account{
-		UserId:       req.UserId,
-		ProfileImage: req.ProfileImage,
-	}})
-	if err != nil {
-		return "", err
-	}
-
-	return msg.Message,err
 }

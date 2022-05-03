@@ -53,7 +53,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			account.GET(":id", h.getAccountByUserId)
 			account.POST(":id", h.createAccountByUserId, h.AdminIdentity)
-			account.PUT("/:id", h.updateUserAccountById)
 		}
 	}
 

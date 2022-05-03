@@ -293,7 +293,7 @@ func (h *Handler) getAllUsersPosts(c *gin.Context) {
 			return
 		}
 
-		posts[index].Username = userInfo.Username
+		posts[index].Username, posts[index].ProfileImage = userInfo.Username, userInfo.ProfileImage
 	}
 
 	c.JSON(http.StatusOK, models.GetAllUsersPostsResponse{

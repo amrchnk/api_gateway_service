@@ -350,11 +350,25 @@ const docTemplate = `{
                 ],
                 "summary": "Get all users posts",
                 "operationId": "get-users-posts",
+                "parameters": [
+                    {
+                        "description": "params for partition",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.GetAllUsersPostsRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.GetAllUsersPostsResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.GetAllUsersPosts"
+                            }
                         }
                     },
                     "400": {
@@ -658,6 +672,12 @@ const docTemplate = `{
                 "title"
             ],
             "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "description": {
                     "type": "string"
                 },
@@ -683,23 +703,20 @@ const docTemplate = `{
                 }
             }
         },
-        "models.GetAllUsersPostsResponse": {
+        "models.GetAllUsersPosts": {
             "type": "object",
+            "required": [
+                "title",
+                "user_id",
+                "username"
+            ],
             "properties": {
-                "users_posts": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/definitions/models.Post"
-                        }
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
                     }
-                }
-            }
-        },
-        "models.GetPostByIdResponse": {
-            "type": "object",
-            "properties": {
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -717,35 +734,40 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "models.Image": {
-            "type": "object",
-            "required": [
-                "link"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
                 },
-                "link": {
+                "updated_at": {
                     "type": "string"
                 },
-                "post_id": {
+                "user_id": {
                     "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
-        "models.Post": {
+        "models.GetAllUsersPostsRequest": {
             "type": "object",
-            "required": [
-                "account_id",
-                "title"
-            ],
             "properties": {
-                "account_id": {
+                "limit": {
                     "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "sorting": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.GetPostByIdResponse": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "created_at": {
                     "type": "string"
@@ -759,7 +781,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Image"
+                        "type": "string"
                     }
                 },
                 "title": {

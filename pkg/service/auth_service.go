@@ -29,7 +29,7 @@ func NewAuthService(auth *clients.AuthClient) AuthService {
 }
 
 func (a AuthService) SignUp(ctx context.Context, user models.User) (int64, error) {
-	return a.auth.SignUpFunc(ctx, user.Login, user.Password)
+	return a.auth.SignUpFunc(ctx, user)
 }
 
 func (a AuthService) SignIn(ctx context.Context, login, password string) (string, error) {

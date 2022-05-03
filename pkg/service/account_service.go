@@ -28,7 +28,3 @@ func (a AccountService) GetAccountByUserId(ctx context.Context, userId int64) (m
 	res, err := a.account.GetAccountByUserIdFunc(ctx, userId)
 	return res, err
 }
-
-func (a AccountService) UpdateAccountByUserId(ctx context.Context, updateInfo models.UpdateAccountRequest) (string, error) {
-	return a.account.UpdateAccountByUserIdFunc(ctx, updateInfo)
-}

@@ -16,6 +16,7 @@ type UpdateUserResponse struct {
 	Login    string `json:"login" db:"login"`
 	Username string `json:"username" db:"username"`
 	Password string `json:"password" db:"password_hash"`
+	ProfileImage string    `json:"profile_image" db:"profile_image"`
 	RoleId   int64  `json:"role_id" db:"role_id"`
 }
 
@@ -43,9 +44,10 @@ type GetAllUsersPosts struct {
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at,omitempty" db:"updated_at"`
 	Images      []string  `json:"images" db:"image"`
-	Categories  []string   `json:"categories,omitempty" db:"category"`
-	UserId     int64     `json:"user_id" db:"user_id" binding:"required"`
-	Username  string    `json:"username" db:"username" binding:"required"`
+	Categories  []string  `json:"categories,omitempty" db:"category"`
+	UserId      int64     `json:"user_id" db:"user_id" binding:"required"`
+	Username    string    `json:"username" db:"username" binding:"required"`
+	ProfileImage string    `json:"profile_image" db:"profile_image"`
 }
 
 type GetAllUsersPostsResponse struct {

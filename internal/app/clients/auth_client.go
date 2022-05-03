@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/amrchnk/api-gateway/pkg/models"
-	auth "github.com/amrchnk/api-gateway/proto/auth"
+	"github.com/amrchnk/api-gateway/proto/auth"
 	"github.com/spf13/viper"
 )
 
@@ -23,12 +23,12 @@ func InitAuthClient(ctx context.Context) {
 	authClientConn.AuthServiceClient = auth.NewAuthServiceClient(conn)
 }
 
-func (ac *AuthClient) SignUpFunc(ctx context.Context, login, password string) (int64, error) {
-	user := auth.User{
-		Login:    login,
-		Password: password,
-	}
-	res, err := ac.SignUp(ctx, &auth.SignUpRequest{User: &user})
+func (ac *AuthClient) SignUpFunc(ctx context.Context, user models.User) (int64, error) {
+	res, err := ac.SignUp(ctx, &auth.SignUpRequest{User: &auth.User{
+		Login:    user.Login,
+		Password: user.Password,
+		Username: user.Username,
+	}})
 	if err != nil {
 		return 0, err
 	}
@@ -67,6 +67,7 @@ func (ac *AuthClient) GetUserByIdFunc(ctx context.Context, id int64) (models.Use
 		Login:    resp.User.Login,
 		Password: resp.User.Password,
 		RoleId:   resp.User.UserRoleId,
+		ProfileImage: resp.User.ProfileImage,
 	}
 
 	return user, err
@@ -91,6 +92,7 @@ func (ac *AuthClient) UpdateUserFunc(ctx context.Context, user models.UpdateUser
 		Login:      user.Login,
 		Password:   user.Password,
 		UserRoleId: user.RoleId,
+		ProfileImage: user.ProfileImage,
 	}
 	req := auth.UpdateUserRequest{
 		User: &userReq,
@@ -115,6 +117,7 @@ func (ac *AuthClient) GetAllUsersFunc(ctx context.Context) ([]models.User, error
 			Id:       resp.User[i].Slug,
 			Login:    resp.User[i].Login,
 			Password: resp.User[i].Password,
+			ProfileImage: resp.User[i].ProfileImage,
 			Username: resp.User[i].Username,
 			RoleId:   resp.User[i].UserRoleId,
 		})

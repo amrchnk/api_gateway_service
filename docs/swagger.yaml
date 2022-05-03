@@ -27,6 +27,10 @@ definitions:
     type: object
   models.CreatePostRequest:
     properties:
+      categories:
+        items:
+          type: integer
+        type: array
       description:
         type: string
       images:
@@ -46,17 +50,12 @@ definitions:
           $ref: '#/definitions/models.GetPostByIdResponse'
         type: array
     type: object
-  models.GetAllUsersPostsResponse:
+  models.GetAllUsersPosts:
     properties:
-      users_posts:
-        additionalProperties:
-          items:
-            $ref: '#/definitions/models.Post'
-          type: array
-        type: object
-    type: object
-  models.GetPostByIdResponse:
-    properties:
+      categories:
+        items:
+          type: string
+        type: array
       created_at:
         type: string
       description:
@@ -69,22 +68,32 @@ definitions:
         type: array
       title:
         type: string
-    type: object
-  models.Image:
-    properties:
-      id:
-        type: integer
-      link:
+      updated_at:
         type: string
-      post_id:
+      user_id:
         type: integer
+      username:
+        type: string
     required:
-    - link
+    - title
+    - user_id
+    - username
     type: object
-  models.Post:
+  models.GetAllUsersPostsRequest:
     properties:
-      account_id:
+      limit:
         type: integer
+      offset:
+        type: integer
+      sorting:
+        type: string
+    type: object
+  models.GetPostByIdResponse:
+    properties:
+      categories:
+        items:
+          type: integer
+        type: array
       created_at:
         type: string
       description:
@@ -93,13 +102,10 @@ definitions:
         type: integer
       images:
         items:
-          $ref: '#/definitions/models.Image'
+          type: string
         type: array
       title:
         type: string
-    required:
-    - account_id
-    - title
     type: object
   models.SignInRequest:
     properties:
@@ -403,13 +409,22 @@ paths:
     get:
       description: Get all users posts
       operationId: get-users-posts
+      parameters:
+      - description: params for partition
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.GetAllUsersPostsRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.GetAllUsersPostsResponse'
+            items:
+              $ref: '#/definitions/models.GetAllUsersPosts'
+            type: array
         "400":
           description: Bad Request
           schema:

@@ -18,11 +18,6 @@ type CreatePostRequest struct {
 	Categories  []int64  `json:"categories,omitempty"`
 }
 
-type UpdateAccountRequest struct {
-	UserId       int64  `json:"user_id" db:"user_id"`
-	ProfileImage string `json:"profile_image" db:"profile_image"`
-}
-
 type GetAllUsersPostsRequest struct {
 	Offset  int64  `json:"offset"`
 	Limit   int64  `json:"limit"`
