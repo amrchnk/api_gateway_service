@@ -64,8 +64,8 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "description": "update user account data",
+            "post": {
+                "description": "create default account with user id from body",
                 "consumes": [
                     "application/json"
                 ],
@@ -75,17 +75,15 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Update account by user id",
-                "operationId": "update-account",
+                "summary": "Create account by user id",
+                "operationId": "create-account",
                 "parameters": [
                     {
-                        "description": "account update info",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UpdateAccountRequest"
-                        }
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -657,9 +655,6 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "profile_image": {
-                    "type": "string"
-                },
                 "user_id": {
                     "type": "integer"
                 }
@@ -731,6 +726,9 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "profile_image": {
+                    "type": "string"
                 },
                 "title": {
                     "type": "string"
@@ -842,17 +840,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UpdateAccountRequest": {
-            "type": "object",
-            "properties": {
-                "profile_image": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
         "models.UpdateUserResponse": {
             "type": "object",
             "required": [
@@ -866,6 +853,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                },
+                "profile_image": {
                     "type": "string"
                 },
                 "role_id": {
@@ -894,6 +884,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                },
+                "profile_image": {
                     "type": "string"
                 },
                 "role_id": {

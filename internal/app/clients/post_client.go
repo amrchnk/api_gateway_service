@@ -41,7 +41,7 @@ func (ac *AccountClient) DeletePostByIdFunc(ctx context.Context, postId int64) (
 	return resp.Message, err
 }
 
-func (ac *AccountClient) UpdatePostFunc(ctx context.Context, post models.Post) (string, error) {
+/*func (ac *AccountClient) UpdatePostFunc(ctx context.Context, post models.PostV2) (string, error) {
 	images := make([]*account.Image, 0, len(post.Images))
 	for _, image := range post.Images {
 		images = append(images, &account.Image{
@@ -63,37 +63,27 @@ func (ac *AccountClient) UpdatePostFunc(ctx context.Context, post models.Post) (
 	}
 
 	return resp.Message, err
-}
+}*/
 
-func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (models.Post, error) {
+func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (models.PostV2, error) {
 	req, err := ac.GetPostById(ctx, &account.GetPostByIdRequest{
 		Id: postId,
 	})
 
 	if err != nil {
 		log.Printf("[ERROR]: %v", err)
-		return models.Post{}, err
+		return models.PostV2{}, err
 	}
 
 	resTime, _ := time.Parse("2006-01-02 15:04:05", req.Post.CreatedAt)
 
-	images := make([]models.Image, 0, len(req.Post.Images))
-	for _, image := range req.Post.Images {
-		imageResp := models.Image{
-			Id:     image.Id,
-			Link:   image.Link,
-			PostId: image.PostId,
-		}
-		images = append(images, imageResp)
-	}
-
-	post := models.Post{
+	post := models.PostV2{
 		Id:          req.Post.Id,
 		Title:       req.Post.Title,
 		Description: req.Post.Description,
 		CreatedAt:   resTime,
-		AccountId:   req.Post.AccountId,
-		Images:      images,
+		UserId:      req.Post.UserId,
+		Images:      req.Post.Images,
 		Categories:  req.Post.Categories,
 	}
 
@@ -135,7 +125,7 @@ func (ac *AccountClient) GetPostsByUserIdFunc(ctx context.Context, userId int64)
 	return posts, err
 }
 
-func (ac *AccountClient) GetAllUsersPostsFunc(ctx context.Context, request models.GetAllUsersPostsRequest) ([]models.GetAllUsersPosts, error) {
+func (ac *AccountClient) GetAllUsersPostsFunc(ctx context.Context, request models.GetAllUsersPostsRequest) ([]models.GetPostByIdResponse, error) {
 	resp, err := ac.GetAllUsersPosts(ctx, &account.GetAllUsersPostsRequest{
 		Limit:   request.Limit,
 		Offset:  request.Offset,
@@ -146,10 +136,10 @@ func (ac *AccountClient) GetAllUsersPostsFunc(ctx context.Context, request model
 		return nil, err
 	}
 
-	posts := make([]models.GetAllUsersPosts, 0, len(resp.Posts))
+	posts := make([]models.GetPostByIdResponse, 0, len(resp.Posts))
 	for _, post := range resp.Posts {
 		resTime, _ := time.Parse("2006-01-02 15:04:05", post.CreatedAt)
-		posts = append(posts, models.GetAllUsersPosts{
+		posts = append(posts, models.GetPostByIdResponse{
 			Id:          post.Id,
 			UserId:      post.UserId,
 			Images:      post.Images,

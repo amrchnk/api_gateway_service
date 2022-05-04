@@ -50,7 +50,7 @@ func (h *Handler) getAccountByUserId(c *gin.Context) {
 // @Success 200 {object} Response
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
-// @Router /account/:id [put]
+// @Router /account/:id [post]
 func (h *Handler) createAccountByUserId(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

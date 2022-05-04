@@ -20,8 +20,6 @@ definitions:
         type: string
       id:
         type: integer
-      profile_image:
-        type: string
       user_id:
         type: integer
     type: object
@@ -66,6 +64,8 @@ definitions:
         items:
           type: string
         type: array
+      profile_image:
+        type: string
       title:
         type: string
       updated_at:
@@ -142,13 +142,6 @@ definitions:
       user_id:
         type: integer
     type: object
-  models.UpdateAccountRequest:
-    properties:
-      profile_image:
-        type: string
-      user_id:
-        type: integer
-    type: object
   models.UpdateUserResponse:
     properties:
       id:
@@ -156,6 +149,8 @@ definitions:
       login:
         type: string
       password:
+        type: string
+      profile_image:
         type: string
       role_id:
         type: integer
@@ -173,6 +168,8 @@ definitions:
       login:
         type: string
       password:
+        type: string
+      profile_image:
         type: string
       role_id:
         type: integer
@@ -223,18 +220,17 @@ paths:
       summary: Get account info
       tags:
       - account
-    put:
+    post:
       consumes:
       - application/json
-      description: update user account data
-      operationId: update-account
+      description: create default account with user id from body
+      operationId: create-account
       parameters:
-      - description: account update info
-        in: body
-        name: input
+      - description: User ID
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/models.UpdateAccountRequest'
+        type: integer
       produces:
       - application/json
       responses:
@@ -250,7 +246,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
-      summary: Update account by user id
+      summary: Create account by user id
       tags:
       - account
   /auth/sign-in:

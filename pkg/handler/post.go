@@ -170,19 +170,25 @@ func (h *Handler) getPostById(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	imageLinks := make([]string, 0, len(post.Images))
-	for _, image := range post.Images {
-		imageLinks = append(imageLinks, image.Link)
-	}
 
 	resp := models.GetPostByIdResponse{
 		Id:          post.Id,
 		Title:       post.Title,
 		Description: post.Description,
 		CreatedAt:   post.CreatedAt,
-		Images:      imageLinks,
+		Images:      post.Images,
 		Categories:  post.Categories,
+		UserId:      post.UserId,
 	}
+
+	userInfo, err := h.Imp.GetUserById(c, resp.UserId)
+	if err != nil {
+		log.Printf("[ERROR]: %v", err)
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	resp.Username, resp.ProfileImage = userInfo.Username, userInfo.ProfileImage
 
 	c.JSON(http.StatusOK, resp)
 }
