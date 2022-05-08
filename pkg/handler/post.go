@@ -176,6 +176,7 @@ func (h *Handler) getPostById(c *gin.Context) {
 		Title:       post.Title,
 		Description: post.Description,
 		CreatedAt:   post.CreatedAt,
+		UpdatedAt:   post.UpdatedAt,
 		Images:      post.Images,
 		Categories:  post.Categories,
 		UserId:      post.UserId,
@@ -193,7 +194,19 @@ func (h *Handler) getPostById(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-/*func (h *Handler) updatePostById(c *gin.Context) {
+// @Summary Update post
+// @Tags posts
+// @Description Update post by post id
+// @ID update-post
+// @Accept  json
+// @Produce  json
+// @Param id   path int64  true  "Post ID"
+// @Param input body models.UpdatePostRequest true "post update info"
+// @Success 200 {object} Response
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /posts/:id [put]
+func (h *Handler) updatePostById(c *gin.Context) {
 	postId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -201,7 +214,7 @@ func (h *Handler) getPostById(c *gin.Context) {
 		return
 	}
 
-	var request models.Post
+	var request models.UpdatePostRequest
 	request.Id = int64(postId)
 	if err := c.BindJSON(&request); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
@@ -215,7 +228,7 @@ func (h *Handler) getPostById(c *gin.Context) {
 	}
 
 	newResponse(c, http.StatusOK, msg)
-}*/
+}
 
 // @Summary Get user posts
 // @Tags posts
@@ -255,6 +268,7 @@ func (h *Handler) getAllUserPosts(c *gin.Context) {
 				Description: post.Description,
 				Images:      imageLinks,
 				CreatedAt:   post.CreatedAt,
+				UpdatedAt:   post.UpdatedAt,
 			})
 		}
 	}
@@ -269,7 +283,7 @@ func (h *Handler) getAllUserPosts(c *gin.Context) {
 // @ID get-users-posts
 // @Param input body models.GetAllUsersPostsRequest true "params for partition"
 // @Produce  json
-// @Success 200 {array} models.GetAllUsersPosts
+// @Success 200 {object} models.GetAllUsersPostsResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /posts/users/ [get]

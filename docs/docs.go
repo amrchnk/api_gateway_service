@@ -293,6 +293,58 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "Update post by post id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Update post",
+                "operationId": "update-post",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Post ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "post update info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatePostRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "delete post by post id",
                 "consumes": [
@@ -363,10 +415,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.GetAllUsersPosts"
-                            }
+                            "$ref": "#/definitions/models.GetAllUsersPostsResponse"
                         }
                     },
                     "400": {
@@ -698,10 +747,34 @@ const docTemplate = `{
                 }
             }
         },
-        "models.GetAllUsersPosts": {
+        "models.GetAllUsersPostsRequest": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "sorting": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.GetAllUsersPostsResponse": {
+            "type": "object",
+            "properties": {
+                "posts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.GetPostByIdResponse"
+                    }
+                }
+            }
+        },
+        "models.GetPostByIdResponse": {
             "type": "object",
             "required": [
-                "title",
                 "user_id",
                 "username"
             ],
@@ -740,49 +813,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.GetAllUsersPostsRequest": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": "integer"
-                },
-                "offset": {
-                    "type": "integer"
-                },
-                "sorting": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.GetPostByIdResponse": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
                     "type": "string"
                 }
             }
@@ -837,6 +867,32 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.UpdatePostRequest": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },

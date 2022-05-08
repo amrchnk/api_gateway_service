@@ -37,7 +37,7 @@ type IAccountService interface {
 	CreatePost(ctx context.Context, post models.Post) (int64, error)
 	DeletePostById(ctx context.Context, postId int64) (string, error)
 	GetPostById(ctx context.Context, postId int64) (models.PostV2, error)
-	//UpdatePost(ctx context.Context, post models.Post) (string, error)
+	UpdatePost(ctx context.Context, post models.UpdatePostRequest) (string, error)
 	GetPostsByUserId(ctx context.Context, userId int64) ([]models.Post, error)
 	GetAllUsersPosts(ctx context.Context, request models.GetAllUsersPostsRequest) ([]models.GetPostByIdResponse, error)
 

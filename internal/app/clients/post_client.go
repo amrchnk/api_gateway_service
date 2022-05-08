@@ -41,21 +41,14 @@ func (ac *AccountClient) DeletePostByIdFunc(ctx context.Context, postId int64) (
 	return resp.Message, err
 }
 
-/*func (ac *AccountClient) UpdatePostFunc(ctx context.Context, post models.PostV2) (string, error) {
-	images := make([]*account.Image, 0, len(post.Images))
-	for _, image := range post.Images {
-		images = append(images, &account.Image{
-			Link: image.Link,
-		})
-	}
+func (ac *AccountClient) UpdatePostFunc(ctx context.Context, post models.UpdatePostRequest) (string, error) {
+
 	resp, err := ac.UpdatePostById(ctx, &account.UpdatePostByIdRequest{
-		Post: &account.Post{
-			Id:          post.Id,
-			Title:       post.Title,
-			Categories:  post.Categories,
-			Description: post.Description,
-			Images:      images,
-		},
+		PostId:      post.Id,
+		Title:       post.Title,
+		Categories:  post.Categories,
+		Description: post.Description,
+		Images:      post.Images,
 	})
 	if err != nil {
 		log.Printf("[ERROR]: %v", err)
@@ -63,7 +56,7 @@ func (ac *AccountClient) DeletePostByIdFunc(ctx context.Context, postId int64) (
 	}
 
 	return resp.Message, err
-}*/
+}
 
 func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (models.PostV2, error) {
 	req, err := ac.GetPostById(ctx, &account.GetPostByIdRequest{
@@ -75,13 +68,15 @@ func (ac *AccountClient) GetPostByIdFunc(ctx context.Context, postId int64) (mod
 		return models.PostV2{}, err
 	}
 
-	resTime, _ := time.Parse("2006-01-02 15:04:05", req.Post.CreatedAt)
+	createResTime, _ := time.Parse("2006-01-02 15:04:05", req.Post.CreatedAt)
+	updateResTime, _ := time.Parse("2006-01-02 15:04:05", req.Post.UpdatedAt)
 
 	post := models.PostV2{
 		Id:          req.Post.Id,
 		Title:       req.Post.Title,
 		Description: req.Post.Description,
-		CreatedAt:   resTime,
+		CreatedAt:   createResTime,
+		UpdatedAt:   updateResTime,
 		UserId:      req.Post.UserId,
 		Images:      req.Post.Images,
 		Categories:  req.Post.Categories,
@@ -138,13 +133,15 @@ func (ac *AccountClient) GetAllUsersPostsFunc(ctx context.Context, request model
 
 	posts := make([]models.GetPostByIdResponse, 0, len(resp.Posts))
 	for _, post := range resp.Posts {
-		resTime, _ := time.Parse("2006-01-02 15:04:05", post.CreatedAt)
+		createResTime, _ := time.Parse("2006-01-02 15:04:05", post.CreatedAt)
+		updateResTime, _ := time.Parse("2006-01-02 15:04:05", post.UpdatedAt)
 		posts = append(posts, models.GetPostByIdResponse{
 			Id:          post.Id,
 			UserId:      post.UserId,
 			Images:      post.Images,
 			Categories:  post.Categories,
-			CreatedAt:   resTime,
+			CreatedAt:   createResTime,
+			UpdatedAt:   updateResTime,
 			Title:       post.Title,
 			Description: post.Description,
 		})
