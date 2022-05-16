@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// @Summary Get User By Id
+// @Summary GetFromCache User By Id
 // @Tags user
 // @Description get user by id
 // @ID get-user-by-id
@@ -102,7 +102,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 	newResponse(c, http.StatusOK, msg)
 }
 
-// @Summary Get all users
+// @Summary GetFromCache all users
 // @Tags user
 // @Description get all users
 // @ID get-all-users

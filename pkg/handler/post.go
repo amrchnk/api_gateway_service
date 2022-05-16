@@ -147,9 +147,9 @@ func DeletePostImages(h *Handler, ctx context.Context, postId int64) error {
 	return nil
 }
 
-// @Summary Get post
+// @Summary GetFromCache post
 // @Tags posts
-// @Description Get post by post id
+// @Description GetFromCache post by post id
 // @ID get-post
 // @Accept  json
 // @Produce  json
@@ -230,9 +230,9 @@ func (h *Handler) updatePostById(c *gin.Context) {
 	newResponse(c, http.StatusOK, msg)
 }
 
-// @Summary Get user posts
+// @Summary GetFromCache user posts
 // @Tags posts
-// @Description Get all user post by user id
+// @Description GetFromCache all user post by user id
 // @ID get-user-posts
 // @Accept  json
 // @Param id   path int64  true  "User ID"
@@ -277,9 +277,9 @@ func (h *Handler) getAllUserPosts(c *gin.Context) {
 	})
 }
 
-// @Summary Get all users posts
+// @Summary GetFromCache all users posts
 // @Tags posts
-// @Description Get all users posts
+// @Description GetFromCache all users posts
 // @ID get-users-posts
 // @Param input body models.GetAllUsersPostsRequest true "params for partition"
 // @Produce  json

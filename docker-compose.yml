@@ -3,6 +3,6 @@ services:
   redis:
     image: redis
     restart: unless-stopped
-    container_name: cookie_redis
+    container_name: redis
     ports:
       - "6379:6379"

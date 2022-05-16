@@ -33,17 +33,15 @@ func (h *Handler) userIdentity(c *gin.Context) {
 
 	claims, err := h.Imp.ParseToken(headerParts[1])
 	if err != nil {
+		/*if ve,ok:=err.(*jwt.ValidationError);ok{
+			if ve.Errors&(jwt.ValidationErrorExpired)!=0{
+				fmt.Println("tost")
+			}
+		}*/
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	/*account, err := h.Imp.GetAccountByUserId(c, claims.UserId)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "che..")
-		return
-	}*/
-
-	//c.Set(accountCtx, account.Id)
 	c.Set(userCtx, claims.UserId)
 	c.Set(roleCtx, claims.RoleId)
 }

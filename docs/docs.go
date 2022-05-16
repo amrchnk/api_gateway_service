@@ -32,7 +32,7 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Get account info",
+                "summary": "GetFromCache account info",
                 "operationId": "get-account",
                 "parameters": [
                     {
@@ -251,7 +251,7 @@ const docTemplate = `{
         },
         "/posts/:id": {
             "get": {
-                "description": "Get post by post id",
+                "description": "GetFromCache post by post id",
                 "consumes": [
                     "application/json"
                 ],
@@ -261,7 +261,7 @@ const docTemplate = `{
                 "tags": [
                     "posts"
                 ],
-                "summary": "Get post",
+                "summary": "GetFromCache post",
                 "operationId": "get-post",
                 "parameters": [
                     {
@@ -391,14 +391,14 @@ const docTemplate = `{
         },
         "/posts/users/": {
             "get": {
-                "description": "Get all users posts",
+                "description": "GetFromCache all users posts",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "posts"
                 ],
-                "summary": "Get all users posts",
+                "summary": "GetFromCache all users posts",
                 "operationId": "get-users-posts",
                 "parameters": [
                     {
@@ -435,7 +435,7 @@ const docTemplate = `{
         },
         "/posts/users/:id": {
             "get": {
-                "description": "Get all user post by user id",
+                "description": "GetFromCache all user post by user id",
                 "consumes": [
                     "application/json"
                 ],
@@ -445,7 +445,7 @@ const docTemplate = `{
                 "tags": [
                     "posts"
                 ],
-                "summary": "Get user posts",
+                "summary": "GetFromCache user posts",
                 "operationId": "get-user-posts",
                 "parameters": [
                     {
@@ -490,7 +490,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Get all users",
+                "summary": "GetFromCache all users",
                 "operationId": "get-all-users",
                 "responses": {
                     "200": {
@@ -583,7 +583,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Get User By Id",
+                "summary": "GetFromCache User By Id",
                 "operationId": "get-user-by-id",
                 "parameters": [
                     {

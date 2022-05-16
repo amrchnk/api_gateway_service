@@ -68,13 +68,12 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.Imp.SignIn(c, request.Login, request.Password)
+	ut, err := h.Imp.SignIn(c, request.Login, request.Password)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.Header(authorizationHeader, fmt.Sprintf("Bearer %v", token))
-	c.JSON(http.StatusOK, models.SignInResponse{
-		Token: token,
-	})
+	//h.Imp.SetInCache(c,)
+	c.Header(authorizationHeader, fmt.Sprintf("Bearer %v", ut.Token))
+	c.JSON(http.StatusOK, ut)
 }

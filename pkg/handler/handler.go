@@ -19,11 +19,11 @@ func NewHandler(Imp *service.Implementation) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.Default()
 
-	router.MaxMultipartMemory = 8 << 20
+	router.MaxMultipartMemory = 8 << 20 //обозначим максимальный размер файлов в МБ, которые пользователь может отправлять в запросе
 	router.Use(CORSMiddleware())
 
-	docs.SwaggerInfo.BasePath = "/api/v1"
-	v1 := router.Group("/api/v1")
+	docs.SwaggerInfo.BasePath = "/api/v1" //инициализируем сваггер
+	v1 := router.Group("/api/v1") //группируем роуты
 	{
 		api := v1.Group("/auth")
 		{
@@ -62,18 +62,16 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-control-expose-headers", "Set-Cookie")
+		c.Header("Access-control-expose-headers", "SetInCache-Cookie")
 		c.Header("Access-Control-Allow-Credentials", "true")
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With,Set-Cookie")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With,SetInCache-Cookie")
 		c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
 			return
 		}
-
 		c.Next()
 	}
 }

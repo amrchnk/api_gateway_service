@@ -5,6 +5,7 @@ import (
 	design_app "github.com/amrchnk/api-gateway"
 	"github.com/amrchnk/api-gateway/internal/app/clients"
 	"github.com/amrchnk/api-gateway/pkg/handler"
+	"github.com/amrchnk/api-gateway/pkg/repository/cache"
 	"github.com/amrchnk/api-gateway/pkg/service"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
@@ -40,13 +41,22 @@ func main() {
 	ctx := context.Background()
 	clients.InitAuthClient(ctx)
 	clients.InitAccountClient(ctx)
-
+	redisOptions := &cache.Options{
+		Addr:     viper.GetString("redis.addr"),
+		Password: viper.GetString("redis.password"),
+		DB:       0,
+	}
+	cache, err := cache.NewRedisClient(ctx, redisOptions)
+	if err != nil {
+		log.Fatalf("failed to initialize redis: %s", err.Error())
+	}
 
 	authService := service.NewAuthService(clients.AuthClientExecutor())
 	accountService := service.NewAccountService(clients.AccountClientExecutor())
-	mediaService := service.NewMediaUpload()
+	mediaService := service.NewCloudService()
+	redisService := service.NewRedisService(cache)
 
-	GwService := service.NewApiGWService(authService, accountService, mediaService)
+	GwService := service.NewApiGWService(authService, accountService, mediaService, redisService)
 	handlers := handler.NewHandler(GwService)
 
 	srv := new(design_app.Server)

@@ -3,26 +3,29 @@ package service
 import (
 	"context"
 	"github.com/amrchnk/api-gateway/pkg/models"
+	"time"
 )
 
 type Implementation struct {
 	IAuthService
 	IAccountService
-	IFileService
+	ICloudinaryService
+	IRedisService
 }
 
-func NewApiGWService(auth AuthService, account AccountService, media FileService) *Implementation {
+func NewApiGWService(auth AuthService, account AccountService, media CloudService, redis RedisService) *Implementation {
 	return &Implementation{
-		IAuthService:    auth,
-		IAccountService: account,
-		IFileService:    media,
+		IAuthService:       auth,
+		IAccountService:    account,
+		ICloudinaryService: media,
+		IRedisService:      redis,
 	}
 }
 
 type IAuthService interface {
 	SignUp(ctx context.Context, user models.User) (int64, error)
-	SignIn(ctx context.Context, login, password string) (string, error)
-	ParseToken(accessToken string) (*tokenClaims, error)
+	SignIn(ctx context.Context, login, password string) (models.UserTokens, error)
+	ParseToken(accessToken string) (*models.TokenClaims, error)
 	GetUserById(ctx context.Context, id int64) (models.User, error)
 	DeleteUserById(ctx context.Context, id int64) (string, error)
 	GetAllUsers(ctx context.Context) ([]models.User, error)
@@ -44,9 +47,14 @@ type IAccountService interface {
 	GetImagesFromPost(ctx context.Context, postId int64) ([]models.Image, error)
 }
 
-type IFileService interface {
+type ICloudinaryService interface {
 	UploadOneFile(path string, file models.File) (string, error)
 	FilesUpload(path string, files []models.File) ([]string, error)
 	DeleteFiles(links []string) error
 	DeleteFile(publicID string) error
+}
+
+type IRedisService interface {
+	GetFromCache(ctx context.Context, key string) ([]byte, error)
+	SetInCache(ctx context.Context, key string, value interface{}, expiration time.Duration) error
 }
