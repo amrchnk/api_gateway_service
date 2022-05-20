@@ -17,11 +17,22 @@ type TokenClaims struct {
 	RoleId int64 `json:"role_id"`
 }
 
-type RefreshTokenClaims struct {
-	jwt.StandardClaims
+type TokenDetails struct {
+	AccessUuid string
+	UserId     int64 `json:"user_id"`
+	RoleId     int64 `json:"role_id"`
+}
+
+type RefreshDetails struct {
+	RefreshUuid string
+	UserId      int64
 }
 
 type UserTokens struct {
-	Token        string `json:"token"`
+	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+	AccessUuid   string `json:"-"`
+	RefreshUuid  string `json:"-"`
+	AtExpires    int64  `json:"-"`
+	RtExpires    int64  `json:"-"`
 }

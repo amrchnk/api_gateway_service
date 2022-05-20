@@ -7,7 +7,7 @@ import (
 )
 
 type RedisService struct {
-	*cache.RedisClient
+	cache *cache.RedisClient
 }
 
 func NewRedisService(cache *cache.RedisClient) RedisService {
@@ -15,9 +15,13 @@ func NewRedisService(cache *cache.RedisClient) RedisService {
 }
 
 func (r RedisService) GetFromCache(ctx context.Context, key string) ([]byte, error) {
-	return r.GetFromCache(ctx, key)
+	return r.cache.GetFromCache(ctx, key)
 }
 
 func (r RedisService) SetInCache(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
-	return r.SetInCache(ctx, key, value, expiration)
+	return r.cache.SetInCache(ctx, key, value, expiration)
+}
+
+func (r RedisService) DeleteFromCache(ctx context.Context, key string) (int64, error) {
+	return r.cache.DeleteFromCache(ctx, key)
 }

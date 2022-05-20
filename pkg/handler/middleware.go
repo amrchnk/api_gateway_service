@@ -8,8 +8,10 @@ import (
 
 const (
 	authorizationHeader = "Authorization"
-	userCtx             = "userId"
-	accountCtx          = "accountId"
+	userCtx     = "userId"
+	tokenUuid   = "tokenUuid"
+	refreshUuid = "refreshUuid"
+	accountCtx  = "accountId"
 	roleCtx             = "roleId"
 )
 
@@ -33,12 +35,13 @@ func (h *Handler) userIdentity(c *gin.Context) {
 
 	claims, err := h.Imp.ParseToken(headerParts[1])
 	if err != nil {
-		/*if ve,ok:=err.(*jwt.ValidationError);ok{
-			if ve.Errors&(jwt.ValidationErrorExpired)!=0{
-				fmt.Println("tost")
-			}
-		}*/
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	_, err = h.Imp.GetFromCache(c, claims.AccessUuid)
+	if err != nil {
+		newErrorResponse(c, http.StatusUnauthorized, "token doesn't exist")
 		return
 	}
 
@@ -46,7 +49,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	c.Set(roleCtx, claims.RoleId)
 }
 
-func (h *Handler) AdminIdentity(c *gin.Context) {
+func (h *Handler) adminIdentity(c *gin.Context) {
 	id, ok := c.Get(roleCtx)
 	if !ok {
 		newErrorResponse(c, http.StatusBadRequest, "role id not found")

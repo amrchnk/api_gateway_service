@@ -10,7 +10,7 @@ type Response struct {
 }
 
 func newResponse(c *gin.Context, statusCode int, message string) {
-	c.AbortWithStatusJSON(statusCode, Response{Status: statusCode, Message: message})
+	c.JSON(statusCode, Response{Status: statusCode, Message: message})
 }
 
 type errorResponse struct {

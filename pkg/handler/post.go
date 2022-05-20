@@ -25,7 +25,7 @@ import (
 func (h *Handler) createPost(c *gin.Context) {
 	userId, exist := c.Get(userCtx)
 	if !exist {
-		newResponse(c, http.StatusBadRequest, "user id isn't found in current context!")
+		newErrorResponse(c, http.StatusBadRequest, "user id isn't found in current context!")
 		return
 	}
 
@@ -89,7 +89,7 @@ func (h *Handler) createPost(c *gin.Context) {
 
 	postId, err := h.Imp.CreatePost(c, post)
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 

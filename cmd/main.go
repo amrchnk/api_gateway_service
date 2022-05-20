@@ -52,11 +52,15 @@ func main() {
 	}
 
 	authService := service.NewAuthService(clients.AuthClientExecutor())
+	tokenService, err := service.NewTokenService(os.Getenv("ACCESS_KEY"), os.Getenv("REFRESH_KEY"))
+	if err != nil {
+		log.Fatalf("failed to initialize tokens: %s", err.Error())
+	}
 	accountService := service.NewAccountService(clients.AccountClientExecutor())
 	mediaService := service.NewCloudService()
 	redisService := service.NewRedisService(cache)
 
-	GwService := service.NewApiGWService(authService, accountService, mediaService, redisService)
+	GwService := service.NewApiGWService(authService, accountService, mediaService, redisService, tokenService)
 	handlers := handler.NewHandler(GwService)
 
 	srv := new(design_app.Server)

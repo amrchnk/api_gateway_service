@@ -11,21 +11,28 @@ type Implementation struct {
 	IAccountService
 	ICloudinaryService
 	IRedisService
+	ITokenService
 }
 
-func NewApiGWService(auth AuthService, account AccountService, media CloudService, redis RedisService) *Implementation {
+func NewApiGWService(auth AuthService, account AccountService, media CloudService, redis RedisService, token *TokenService) *Implementation {
 	return &Implementation{
 		IAuthService:       auth,
 		IAccountService:    account,
 		ICloudinaryService: media,
 		IRedisService:      redis,
+		ITokenService:      token,
 	}
+}
+
+type ITokenService interface {
+	ParseToken(accessToken string) (*models.TokenDetails, error)
+	CreateTokens(userId, RoleId int64) (models.UserTokens, error)
+	ParseRefreshToken(refreshToken string) (*models.RefreshDetails, error)
 }
 
 type IAuthService interface {
 	SignUp(ctx context.Context, user models.User) (int64, error)
-	SignIn(ctx context.Context, login, password string) (models.UserTokens, error)
-	ParseToken(accessToken string) (*models.TokenClaims, error)
+	SignIn(ctx context.Context, login, password string) (models.User, error)
 	GetUserById(ctx context.Context, id int64) (models.User, error)
 	DeleteUserById(ctx context.Context, id int64) (string, error)
 	GetAllUsers(ctx context.Context) ([]models.User, error)
@@ -57,4 +64,5 @@ type ICloudinaryService interface {
 type IRedisService interface {
 	GetFromCache(ctx context.Context, key string) ([]byte, error)
 	SetInCache(ctx context.Context, key string, value interface{}, expiration time.Duration) error
+	DeleteFromCache(ctx context.Context, key string) (int64, error)
 }

@@ -64,3 +64,7 @@ func (rc *RedisClient) SetInCache(ctx context.Context, key string, value interfa
 func (rc *RedisClient) GetFromCache(ctx context.Context, key string) ([]byte, error) {
 	return rc.client.Get(ctx, key).Bytes()
 }
+
+func (rc *RedisClient) DeleteFromCache(ctx context.Context, key string) (int64, error) {
+	return rc.client.Del(ctx, key).Result()
+}

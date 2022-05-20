@@ -5,6 +5,7 @@ import (
 	"github.com/amrchnk/api-gateway/pkg/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 // @Summary SignUp
@@ -68,12 +69,122 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	ut, err := h.Imp.SignIn(c, request.Login, request.Password)
+	user, err := h.Imp.SignIn(c, request.Login, request.Password)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	//h.Imp.SetInCache(c,)
-	c.Header(authorizationHeader, fmt.Sprintf("Bearer %v", ut.Token))
-	c.JSON(http.StatusOK, ut)
+
+	userTokens, err := h.Imp.CreateTokens(user.Id, user.RoleId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	at := time.Unix(userTokens.AtExpires, 0)
+	rt := time.Unix(userTokens.RtExpires, 0)
+	now := time.Now()
+
+	err = h.Imp.SetInCache(c, userTokens.AccessUuid, userTokens.AccessToken, at.Sub(now))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.Imp.SetInCache(c, userTokens.RefreshUuid, userTokens.RefreshToken, rt.Sub(now))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.Header(authorizationHeader, fmt.Sprintf("Bearer %v", userTokens.AccessToken))
+	c.JSON(http.StatusOK, userTokens)
+}
+
+func (h *Handler) logOut(c *gin.Context) {
+	var request models.SignOutRequest
+
+	if err := c.BindJSON(&request); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	accessClaims, err := h.Imp.ParseToken(request.AccessToken)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	del, err := h.Imp.DeleteFromCache(c, accessClaims.AccessUuid)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "access token is invalid")
+		return
+	}
+
+	refreshClaims, err := h.Imp.ParseRefreshToken(request.RefreshToken)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	del, err = h.Imp.DeleteFromCache(c, refreshClaims.RefreshUuid)
+	if err != nil || del == 0 {
+		newErrorResponse(c, http.StatusInternalServerError, "invalid refresh token")
+		return
+	}
+	c.Writer.Header().Del(authorizationHeader)
+
+	newResponse(c, http.StatusOK, "User successfully logged out")
+}
+
+func (h *Handler) refreshAccessToken(c *gin.Context) {
+	mapToken := map[string]string{}
+	if err := c.ShouldBindJSON(&mapToken); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	refreshToken := mapToken["refresh_token"]
+
+	refreshClaims, err := h.Imp.ParseRefreshToken(refreshToken)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	user, err := h.Imp.GetUserById(c, refreshClaims.UserId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	exist, err := h.Imp.DeleteFromCache(c, refreshClaims.RefreshUuid)
+	if err != nil || exist == 0 {
+		newErrorResponse(c, http.StatusUnauthorized, "invalid refresh token")
+		return
+	}
+	fmt.Println(exist)
+
+	userTokens, err := h.Imp.CreateTokens(user.Id, user.RoleId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	at := time.Unix(userTokens.AtExpires, 0)
+	rt := time.Unix(userTokens.RtExpires, 0)
+	now := time.Now()
+
+	err = h.Imp.SetInCache(c, userTokens.AccessUuid, userTokens.AccessToken, at.Sub(now))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = h.Imp.SetInCache(c, userTokens.RefreshUuid, userTokens.RefreshToken, rt.Sub(now))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Header(authorizationHeader, fmt.Sprintf("Bearer %v", userTokens.AccessToken))
+
+	c.JSON(http.StatusOK, userTokens)
 }

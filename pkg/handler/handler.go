@@ -23,19 +23,21 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router.Use(CORSMiddleware())
 
 	docs.SwaggerInfo.BasePath = "/api/v1" //инициализируем сваггер
-	v1 := router.Group("/api/v1") //группируем роуты
+	v1 := router.Group("/api/v1")         //группируем роуты
 	{
 		api := v1.Group("/auth")
 		{
 			api.POST("/sign-up", h.signUp)
 			api.POST("/sign-in", h.signIn)
+			api.POST("/logout", h.userIdentity, h.logOut)
+			api.POST("/refresh",h.refreshAccessToken)
 		}
 
 		user := v1.Group("/users", h.userIdentity)
 		{
 			user.GET("/:id", h.getUserById)
-			user.GET("/", h.AdminIdentity, h.getAllUsers)
-			user.DELETE("/:id", h.AdminIdentity, h.deleteUserById)
+			user.GET("/", h.adminIdentity, h.getAllUsers)
+			user.DELETE("/:id", h.adminIdentity, h.deleteUserById)
 			user.PUT("/", h.updateUser)
 		}
 
@@ -52,7 +54,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		account := v1.Group("/account", h.userIdentity)
 		{
 			account.GET(":id", h.getAccountByUserId)
-			account.POST(":id", h.createAccountByUserId, h.AdminIdentity)
+			account.POST(":id", h.createAccountByUserId, h.adminIdentity)
 		}
 	}
 
@@ -65,7 +67,7 @@ func CORSMiddleware() gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-control-expose-headers", "SetInCache-Cookie")
 		c.Header("Access-Control-Allow-Credentials", "true")
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With,SetInCache-Cookie")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-AccessToken, Authorization, accept, origin, Cache-Control, X-Requested-With,SetInCache-Cookie")
 		c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT")
 
 		if c.Request.Method == "OPTIONS" {

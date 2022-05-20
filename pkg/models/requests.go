@@ -11,6 +11,11 @@ type SignInRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type SignOutRequest struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
 type CreatePostRequest struct {
 	Title       string   `json:"title" db:"title" binding:"required"`
 	Description string   `json:"description" db:"description"`
@@ -19,7 +24,7 @@ type CreatePostRequest struct {
 }
 
 type UpdatePostRequest struct {
-	Id          int64     `json:"id" db:"id"`
+	Id          int64    `json:"id" db:"id"`
 	Title       string   `json:"title,omitempty" db:"title"`
 	Description string   `json:"description,omitempty" db:"description"`
 	Images      []string `json:"images,omitempty"`
