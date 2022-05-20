@@ -8,10 +8,8 @@ import (
 
 const (
 	authorizationHeader = "Authorization"
-	userCtx     = "userId"
-	tokenUuid   = "tokenUuid"
-	refreshUuid = "refreshUuid"
-	accountCtx  = "accountId"
+	userCtx             = "userId"
+	accountCtx          = "accountId"
 	roleCtx             = "roleId"
 )
 

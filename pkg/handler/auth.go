@@ -57,7 +57,7 @@ func (h *Handler) signUp(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param input body models.SignInRequest true "credentials"
-// @Success 200 {object} models.SignInResponse "Success login"
+// @Success 200 {object} models.UserTokens "Success login"
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /auth/sign-in [post]
@@ -100,6 +100,17 @@ func (h *Handler) signIn(c *gin.Context) {
 	c.JSON(http.StatusOK, userTokens)
 }
 
+// @Summary LogOut
+// @Tags auth
+// @Description logout user
+// @ID logout
+// @Accept  json
+// @Produce  json
+// @Param input body models.SignOutRequest true "user tokens"
+// @Success 200 {object} Response "Success login"
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /auth/logout [post]
 func (h *Handler) logOut(c *gin.Context) {
 	var request models.SignOutRequest
 
@@ -135,15 +146,25 @@ func (h *Handler) logOut(c *gin.Context) {
 	newResponse(c, http.StatusOK, "User successfully logged out")
 }
 
+// @Summary Refresh token
+// @Tags auth
+// @Description refresh access token
+// @ID refresh
+// @Accept  json
+// @Produce  json
+// @Param input body models.RefreshTokenRequest true "user refresh token"
+// @Success 200 {object} models.UserTokens "Success refresh"
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /auth/refresh [post]
 func (h *Handler) refreshAccessToken(c *gin.Context) {
-	mapToken := map[string]string{}
-	if err := c.ShouldBindJSON(&mapToken); err != nil {
+	var request models.RefreshTokenRequest
+	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	refreshToken := mapToken["refresh_token"]
 
-	refreshClaims, err := h.Imp.ParseRefreshToken(refreshToken)
+	refreshClaims, err := h.Imp.ParseRefreshToken(request.RefreshToken)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -185,6 +206,5 @@ func (h *Handler) refreshAccessToken(c *gin.Context) {
 	}
 
 	c.Header(authorizationHeader, fmt.Sprintf("Bearer %v", userTokens.AccessToken))
-
 	c.JSON(http.StatusOK, userTokens)
 }

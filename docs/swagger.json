@@ -101,6 +101,100 @@
                 }
             }
         },
+        "/auth/logout": {
+            "post": {
+                "description": "logout user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "LogOut",
+                "operationId": "logout",
+                "parameters": [
+                    {
+                        "description": "user tokens",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SignOutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success login",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "refresh access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh token",
+                "operationId": "refresh",
+                "parameters": [
+                    {
+                        "description": "user refresh token",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RefreshTokenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success refresh",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserTokens"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/sign-in": {
             "post": {
                 "description": "login",
@@ -130,7 +224,7 @@
                     "200": {
                         "description": "Success login",
                         "schema": {
-                            "$ref": "#/definitions/models.SignInResponse"
+                            "$ref": "#/definitions/models.UserTokens"
                         }
                     },
                     "400": {
@@ -244,7 +338,7 @@
         },
         "/posts/:id": {
             "get": {
-                "description": "Get post by post id",
+                "description": "GetFromCache post by post id",
                 "consumes": [
                     "application/json"
                 ],
@@ -254,7 +348,7 @@
                 "tags": [
                     "posts"
                 ],
-                "summary": "Get post",
+                "summary": "GetFromCache post",
                 "operationId": "get-post",
                 "parameters": [
                     {
@@ -384,14 +478,14 @@
         },
         "/posts/users/": {
             "get": {
-                "description": "Get all users posts",
+                "description": "GetFromCache all users posts",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "posts"
                 ],
-                "summary": "Get all users posts",
+                "summary": "GetFromCache all users posts",
                 "operationId": "get-users-posts",
                 "parameters": [
                     {
@@ -428,7 +522,7 @@
         },
         "/posts/users/:id": {
             "get": {
-                "description": "Get all user post by user id",
+                "description": "GetFromCache all user post by user id",
                 "consumes": [
                     "application/json"
                 ],
@@ -438,7 +532,7 @@
                 "tags": [
                     "posts"
                 ],
-                "summary": "Get user posts",
+                "summary": "GetFromCache user posts",
                 "operationId": "get-user-posts",
                 "parameters": [
                     {
@@ -483,7 +577,7 @@
                 "tags": [
                     "user"
                 ],
-                "summary": "Get all users",
+                "summary": "GetFromCache all users",
                 "operationId": "get-all-users",
                 "responses": {
                     "200": {
@@ -576,7 +670,7 @@
                 "tags": [
                     "user"
                 ],
-                "summary": "Get User By Id",
+                "summary": "GetFromCache User By Id",
                 "operationId": "get-user-by-id",
                 "parameters": [
                     {
@@ -810,6 +904,14 @@
                 }
             }
         },
+        "models.RefreshTokenRequest": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
         "models.SignInRequest": {
             "type": "object",
             "required": [
@@ -825,10 +927,13 @@
                 }
             }
         },
-        "models.SignInResponse": {
+        "models.SignOutRequest": {
             "type": "object",
             "properties": {
-                "token": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
                     "type": "string"
                 }
             }
@@ -942,6 +1047,17 @@
                     "type": "integer"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserTokens": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
                     "type": "string"
                 }
             }

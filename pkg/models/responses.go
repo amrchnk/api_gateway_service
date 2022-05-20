@@ -7,10 +7,6 @@ type SignUpResponse struct {
 	AccountId int64 `json:"account_id"`
 }
 
-type SignInResponse struct {
-	Token string `json:"token"`
-}
-
 type UpdateUserResponse struct {
 	Id           int64  `json:"id" db:"id" binding:"required"`
 	Login        string `json:"login" db:"login"`

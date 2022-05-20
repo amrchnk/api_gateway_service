@@ -94,6 +94,11 @@ definitions:
     - user_id
     - username
     type: object
+  models.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    type: object
   models.SignInRequest:
     properties:
       login:
@@ -104,9 +109,11 @@ definitions:
     - login
     - password
     type: object
-  models.SignInResponse:
+  models.SignOutRequest:
     properties:
-      token:
+      access_token:
+        type: string
+      refresh_token:
         type: string
     type: object
   models.SignUpRequest:
@@ -184,6 +191,13 @@ definitions:
     - password
     - username
     type: object
+  models.UserTokens:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
 host: localhost:8000
 info:
   contact:
@@ -253,6 +267,68 @@ paths:
       summary: Create account by user id
       tags:
       - account
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: logout user
+      operationId: logout
+      parameters:
+      - description: user tokens
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignOutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success login
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: LogOut
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: refresh access token
+      operationId: refresh
+      parameters:
+      - description: user refresh token
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success refresh
+          schema:
+            $ref: '#/definitions/models.UserTokens'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Refresh token
+      tags:
+      - auth
   /auth/sign-in:
     post:
       consumes:
@@ -272,7 +348,7 @@ paths:
         "200":
           description: Success login
           schema:
-            $ref: '#/definitions/models.SignInResponse'
+            $ref: '#/definitions/models.UserTokens'
         "400":
           description: Bad Request
           schema:
@@ -379,7 +455,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get post by post id
+      description: GetFromCache post by post id
       operationId: get-post
       parameters:
       - description: Post ID
@@ -402,7 +478,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
-      summary: Get post
+      summary: GetFromCache post
       tags:
       - posts
     put:
@@ -442,7 +518,7 @@ paths:
       - posts
   /posts/users/:
     get:
-      description: Get all users posts
+      description: GetFromCache all users posts
       operationId: get-users-posts
       parameters:
       - description: params for partition
@@ -466,14 +542,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
-      summary: Get all users posts
+      summary: GetFromCache all users posts
       tags:
       - posts
   /posts/users/:id:
     get:
       consumes:
       - application/json
-      description: Get all user post by user id
+      description: GetFromCache all user post by user id
       operationId: get-user-posts
       parameters:
       - description: User ID
@@ -496,7 +572,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
-      summary: Get user posts
+      summary: GetFromCache user posts
       tags:
       - posts
   /users/:
@@ -524,7 +600,7 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handler.errorResponse'
-      summary: Get all users
+      summary: GetFromCache all users
       tags:
       - user
     put:
@@ -625,7 +701,7 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handler.errorResponse'
-      summary: Get User By Id
+      summary: GetFromCache User By Id
       tags:
       - user
 swagger: "2.0"

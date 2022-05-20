@@ -8,7 +8,7 @@ import (
 )
 
 // @Summary GetFromCache User By Id
-// @Tags user
+// @Tags users
 // @Description get user by id
 // @ID get-user-by-id
 // @Accept  json
@@ -37,7 +37,7 @@ func (h *Handler) getUserById(c *gin.Context) {
 }
 
 // @Summary Delete User By Id
-// @Tags user
+// @Tags users
 // @Description delete user by id
 // @ID delete-user-by-id
 // @Accept  json
@@ -71,7 +71,7 @@ func (h *Handler) deleteUserById(c *gin.Context) {
 }
 
 // @Summary Update User fields
-// @Tags user
+// @Tags users
 // @Description Update user fields
 // @ID update-user
 // @Accept  json
@@ -103,7 +103,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 }
 
 // @Summary GetFromCache all users
-// @Tags user
+// @Tags users
 // @Description get all users
 // @ID get-all-users
 // @Accept  json
