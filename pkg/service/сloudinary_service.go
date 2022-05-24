@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/amrchnk/api-gateway/pkg/models"
 	"github.com/cloudinary/cloudinary-go"
@@ -96,8 +97,10 @@ func (m CloudService) FilesUpload(path string, files []models.File) ([]string, e
 		uploadParam, err := m.Upload.Upload(ctx, file.File, uploader.UploadParams{
 			Folder:   path,
 		})
-
-		if err != nil {
+		if uploadParam.Error.Message!=""{
+			return links, errors.New(uploadParam.Error.Message)
+		}
+		if err != nil{
 			return links, err
 		}
 		links = append(links, uploadParam.SecureURL) // добавляем ссылку на файл в массив

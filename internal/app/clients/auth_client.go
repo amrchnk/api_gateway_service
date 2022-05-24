@@ -2,10 +2,15 @@ package clients
 
 import (
 	"context"
+	"crypto/sha1"
 	"fmt"
 	"github.com/amrchnk/api-gateway/pkg/models"
 	"github.com/amrchnk/api-gateway/proto/auth"
 	"github.com/spf13/viper"
+)
+
+const (
+	salt       = "hjqrhjqw124617ajfhajs"
 )
 
 type AuthClient struct {
@@ -26,7 +31,7 @@ func InitAuthClient(ctx context.Context) {
 func (ac *AuthClient) SignUpFunc(ctx context.Context, user models.User) (int64, error) {
 	res, err := ac.SignUp(ctx, &auth.SignUpRequest{User: &auth.User{
 		Login:    user.Login,
-		Password: user.Password,
+		Password: generatePasswordHash(user.Password),
 		Username: user.Username,
 	}})
 	if err != nil {
@@ -40,7 +45,7 @@ func (ac *AuthClient) SignUpFunc(ctx context.Context, user models.User) (int64, 
 
 func (ac *AuthClient) SignInFunc(ctx context.Context, login, password string) (models.User, error) {
 	var user models.User
-	authReq := auth.SignInRequest{Login: login, Password: password}
+	authReq := auth.SignInRequest{Login: login, Password: generatePasswordHash(password)}
 	resp, err := ac.SignIn(ctx, &authReq)
 	if err != nil {
 		return user, err
@@ -124,4 +129,11 @@ func (ac *AuthClient) GetAllUsersFunc(ctx context.Context) ([]models.User, error
 	}
 
 	return users, err
+}
+
+func generatePasswordHash(password string) string {
+	hash := sha1.New()
+	hash.Write([]byte(password))
+
+	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
