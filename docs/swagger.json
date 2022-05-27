@@ -575,7 +575,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "GetFromCache all users",
                 "operationId": "get-all-users",
@@ -615,7 +615,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Update User fields",
                 "operationId": "update-user",
@@ -668,7 +668,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "GetFromCache User By Id",
                 "operationId": "get-user-by-id",
@@ -717,7 +717,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Delete User By Id",
                 "operationId": "delete-user-by-id",
@@ -996,13 +996,7 @@
         },
         "models.UpdateUserResponse": {
             "type": "object",
-            "required": [
-                "id"
-            ],
             "properties": {
-                "id": {
-                    "type": "integer"
-                },
                 "login": {
                     "type": "string"
                 },

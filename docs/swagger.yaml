@@ -155,8 +155,6 @@ definitions:
     type: object
   models.UpdateUserResponse:
     properties:
-      id:
-        type: integer
       login:
         type: string
       password:
@@ -167,8 +165,6 @@ definitions:
         type: integer
       username:
         type: string
-    required:
-    - id
     type: object
   models.User:
     properties:
@@ -602,7 +598,7 @@ paths:
             $ref: '#/definitions/handler.errorResponse'
       summary: GetFromCache all users
       tags:
-      - user
+      - users
     put:
       consumes:
       - application/json
@@ -636,7 +632,7 @@ paths:
             $ref: '#/definitions/handler.errorResponse'
       summary: Update User fields
       tags:
-      - user
+      - users
   /users/:id:
     delete:
       consumes:
@@ -670,7 +666,7 @@ paths:
             $ref: '#/definitions/handler.errorResponse'
       summary: Delete User By Id
       tags:
-      - user
+      - users
     get:
       consumes:
       - application/json
@@ -703,5 +699,5 @@ paths:
             $ref: '#/definitions/handler.errorResponse'
       summary: GetFromCache User By Id
       tags:
-      - user
+      - users
 swagger: "2.0"

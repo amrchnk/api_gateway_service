@@ -582,7 +582,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "GetFromCache all users",
                 "operationId": "get-all-users",
@@ -622,7 +622,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Update User fields",
                 "operationId": "update-user",
@@ -675,7 +675,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "GetFromCache User By Id",
                 "operationId": "get-user-by-id",
@@ -724,7 +724,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "Delete User By Id",
                 "operationId": "delete-user-by-id",
@@ -1003,13 +1003,7 @@ const docTemplate = `{
         },
         "models.UpdateUserResponse": {
             "type": "object",
-            "required": [
-                "id"
-            ],
             "properties": {
-                "id": {
-                    "type": "integer"
-                },
                 "login": {
                     "type": "string"
                 },
