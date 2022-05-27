@@ -136,6 +136,9 @@ func DeletePostImages(h *Handler, ctx context.Context, postId int64) error {
 		return err
 	}
 	var links []string
+	if len(links) == 0 {
+		return nil
+	}
 	for _, img := range images {
 		links = append(links, img.Link)
 	}
