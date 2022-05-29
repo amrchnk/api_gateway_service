@@ -7,15 +7,6 @@ type SignUpResponse struct {
 	AccountId int64 `json:"account_id"`
 }
 
-type UpdateUserResponse struct {
-	Id           int64  `json:"-"`
-	Login        string `json:"login" db:"login"`
-	Username     string `json:"username" db:"username"`
-	Password     string `json:"password" db:"password_hash"`
-	ProfileImage string `json:"profile_image" db:"profile_image"`
-	RoleId       int64  `json:"role_id" db:"role_id"`
-}
-
 type GetAllUsersResponse struct {
 	Data []User `json:"data"`
 }

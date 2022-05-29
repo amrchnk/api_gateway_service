@@ -300,7 +300,7 @@ const docTemplate = `{
             "post": {
                 "description": "create post with account id that written in context",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -312,13 +312,17 @@ const docTemplate = `{
                 "operationId": "delete-post",
                 "parameters": [
                     {
-                        "description": "post info",
+                        "type": "string",
+                        "name": "json",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "post files",
                         "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CreatePostRequest"
-                        }
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -800,33 +804,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.CreatePostRequest": {
-            "type": "object",
-            "required": [
-                "images",
-                "title"
-            ],
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "description": {
-                    "type": "string"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
-                    "type": "string"
                 }
             }
         },

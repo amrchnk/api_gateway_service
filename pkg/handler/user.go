@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/amrchnk/api-gateway/pkg/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -76,20 +78,72 @@ func (h *Handler) deleteUserById(c *gin.Context) {
 // @ID update-user
 // @Accept  json
 // @Produce  json
-// @Param input body models.UpdateUserResponse true "user fields to update"
+// @Param input body models.UpdateUserRequest true "user fields to update"
 // @Success 200 {string} string "message"
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /users/ [put]
 func (h *Handler) updateUser(c *gin.Context) {
-	var userChanges models.UpdateUserResponse
+	userId, exist := c.Get(userCtx)
+	if !exist {
+		newErrorResponse(c, http.StatusBadRequest, "user id isn't found in current context!")
+		return
+	}
 
-	if err := c.BindJSON(&userChanges); err != nil {
+	var request models.UpdateUserRequest
+
+	if err := c.ShouldBind(&request); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	if userChanges.Username == "" && userChanges.Login == "" && userChanges.Password == "" {
+
+	form, err := c.MultipartForm()
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var userChanges models.UpdateUserRequestTextData
+	textData := form.Value["json"]
+	if textData != nil {
+		err = json.Unmarshal([]byte(textData[0]), &userChanges)
+		if err != nil {
+			newErrorResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
+	}
+
+	avatar := form.File["avatar"][0]
+	var link string
+	if avatar != nil {
+		user, err := h.Imp.GetUserById(c, userId.(int64))
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		err = h.Imp.DeleteFile(user.ProfileImage)
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		osFile, err := avatar.Open()
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		link, err = h.Imp.UploadOneFile(fmt.Sprintf("design_app/avatars/user%d", userId), models.File{File: osFile, FileName: avatar.Filename})
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
+	userChanges.ProfileImage, userChanges.Id = link, userId.(int64)
+
+	if userChanges.Username == "" && userChanges.Login == "" && userChanges.Password == "" && userChanges.ProfileImage == "" {
 		newErrorResponse(c, http.StatusBadRequest, "at least one parameter must be passed to change")
 		return
 	}

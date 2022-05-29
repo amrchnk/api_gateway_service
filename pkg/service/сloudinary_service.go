@@ -43,7 +43,6 @@ func (m CloudService) UploadOneFile(path string, file models.File) (string, erro
 	defer cancel()
 
 	uploadParam, err := m.Upload.Upload(ctx, file.File, uploader.UploadParams{
-		UseFilename: true,
 		Folder:      path,
 	})
 	if err != nil {
@@ -60,9 +59,8 @@ func (m CloudService) DeleteFiles(links []string) error {
 	for _, link := range links {
 		arr := strings.Split(link, "/")
 		fileName := strings.Split(arr[len(arr)-1], ".")[0]
-		fmt.Println(arr[len(arr)-2] + fileName)
 		result, err := m.Upload.Destroy(ctx, uploader.DestroyParams{
-			PublicID: arr[len(arr)-2] +"/"+ fileName,
+			PublicID: arr[len(arr)-2] + "/" + fileName,
 		})
 		if err != nil {
 			return fmt.Errorf("error while deleting file from remote server: %v", err)
@@ -72,11 +70,12 @@ func (m CloudService) DeleteFiles(links []string) error {
 	return nil
 }
 
-func (m CloudService) DeleteFile(publicID string) error {
+func (m CloudService) DeleteFile(link string) error {
 	ctx := context.Background()
-
+	arr := strings.Split(link, "/")
+	fileName := strings.Split(arr[len(arr)-1], ".")[0]
 	result, err := m.Upload.Destroy(ctx, uploader.DestroyParams{
-		PublicID: publicID,
+		PublicID: arr[len(arr)-2] + "/" + fileName,
 	})
 	if err != nil {
 		log.Printf("[ERROR]: error while deleting file from remote server -  %v", err)
@@ -95,12 +94,12 @@ func (m CloudService) FilesUpload(path string, files []models.File) ([]string, e
 	//проходимся по массиву входящих файлов и загружаем каждый файл из массива в хранилище
 	for _, file := range files {
 		uploadParam, err := m.Upload.Upload(ctx, file.File, uploader.UploadParams{
-			Folder:   path,
+			Folder: path,
 		})
-		if uploadParam.Error.Message!=""{
+		if uploadParam.Error.Message != "" {
 			return links, errors.New(uploadParam.Error.Message)
 		}
-		if err != nil{
+		if err != nil {
 			return links, err
 		}
 		links = append(links, uploadParam.SecureURL) // добавляем ссылку на файл в массив

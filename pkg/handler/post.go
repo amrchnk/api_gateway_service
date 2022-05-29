@@ -15,9 +15,10 @@ import (
 // @Tags posts
 // @Description create post with account id that written in context
 // @ID delete-post
-// @Accept  json
+// @Accept  mpfd
 // @Produce  json
-// @Param input body models.CreatePostRequest true "post info"
+// @Param input formData models.CreatePostRequest true "post info"
+// @Param input formData file true "post files"
 // @Success 200 {object} Response
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -34,6 +35,11 @@ func (h *Handler) createPost(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, "error getting user account")
 		return
 	}
+	var request models.CreatePostRequest
+	if err = c.ShouldBind(&request); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
 
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -42,6 +48,13 @@ func (h *Handler) createPost(c *gin.Context) {
 	}
 	files := form.File["Files"]
 	textData := form.Value["PostInfo"]
+	var post models.Post
+
+	err = json.Unmarshal([]byte(textData[0]), &post)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
 
 	filesInput := make([]models.File, 0, len(files))
 
@@ -62,30 +75,15 @@ func (h *Handler) createPost(c *gin.Context) {
 		return
 	}
 
-	var req models.CreatePostRequest
-	req.Images = links
-
-	err = json.Unmarshal([]byte(textData[0]), &req)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	images := make([]models.Image, 0, len(req.Images))
-	for i := range req.Images {
+	images := make([]models.Image, 0, len(links))
+	for i := range links {
 		image := models.Image{
-			Link: req.Images[i],
+			Link: links[i],
 		}
 		images = append(images, image)
 	}
 
-	post := models.Post{
-		Title:       req.Title,
-		Description: req.Description,
-		AccountId:   account.Id,
-		Images:      images,
-		Categories:  req.Categories,
-	}
+	post.Images, post.AccountId = images, account.Id
 
 	postId, err := h.Imp.CreatePost(c, post)
 	if err != nil {
@@ -131,12 +129,14 @@ func (h *Handler) deletePostById(c *gin.Context) {
 	newResponse(c, http.StatusOK, msg)
 }
 func DeletePostImages(h *Handler, ctx context.Context, postId int64) error {
+	fmt.Println(postId)
 	images, err := h.Imp.GetImagesFromPost(ctx, postId)
+	fmt.Println(images)
 	if err != nil {
 		return err
 	}
 	var links []string
-	if len(links) == 0 {
+	if len(images) == 0 {
 		return nil
 	}
 	for _, img := range images {

@@ -34,6 +34,6 @@ func (a AuthService) GetAllUsers(ctx context.Context) ([]models.User, error) {
 	return a.auth.GetAllUsersFunc(ctx)
 }
 
-func (a AuthService) UpdateUser(ctx context.Context, user models.UpdateUserResponse) (string, error) {
+func (a AuthService) UpdateUser(ctx context.Context, user models.UpdateUserRequestTextData) (string, error) {
 	return a.auth.UpdateUserFunc(ctx, user)
 }

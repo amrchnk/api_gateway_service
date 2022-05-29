@@ -36,7 +36,7 @@ type IAuthService interface {
 	GetUserById(ctx context.Context, id int64) (models.User, error)
 	DeleteUserById(ctx context.Context, id int64) (string, error)
 	GetAllUsers(ctx context.Context) ([]models.User, error)
-	UpdateUser(ctx context.Context, user models.UpdateUserResponse) (string, error)
+	UpdateUser(ctx context.Context, user models.UpdateUserRequestTextData) (string, error)
 }
 
 type IAccountService interface {
@@ -58,7 +58,7 @@ type ICloudinaryService interface {
 	UploadOneFile(path string, file models.File) (string, error)
 	FilesUpload(path string, files []models.File) ([]string, error)
 	DeleteFiles(links []string) error
-	DeleteFile(publicID string) error
+	DeleteFile(link string) error
 }
 
 type IRedisService interface {

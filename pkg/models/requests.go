@@ -1,5 +1,7 @@
 package models
 
+import "mime/multipart"
+
 type SignUpRequest struct {
 	Login    string `json:"login" binding:"required"`
 	Password string `json:"password" binding:"required"`
@@ -21,9 +23,13 @@ type RefreshTokenRequest struct {
 }
 
 type CreatePostRequest struct {
+	Files    []*multipart.FileHeader `form:"Files" binding:"required" swaggerignore:"true"`
+	PostInfo string                  `form:"PostInfo" binding:"required"`
+}
+
+type CreatePostTextData struct {
 	Title       string   `json:"title" db:"title" binding:"required"`
 	Description string   `json:"description" db:"description"`
-	Images      []string `json:"images" binding:"required"`
 	Categories  []int64  `json:"categories,omitempty"`
 }
 
@@ -39,4 +45,18 @@ type GetAllUsersPostsRequest struct {
 	Offset  int64  `json:"offset"`
 	Limit   int64  `json:"limit"`
 	Sorting string `json:"sorting"`
+}
+
+type UpdateUserRequest struct {
+	ProfileImage *multipart.FileHeader `form:"avatar" swaggerignore:"true"`
+	Json         string                `form:"json"`
+}
+
+type UpdateUserRequestTextData struct {
+	Id           int64  `json:"-"`
+	Login        string `json:"login" db:"login"`
+	Username     string `json:"username" db:"username"`
+	ProfileImage string `json:"profile_image" db:"profile_image"`
+	Password     string `json:"password" db:"password_hash"`
+	RoleId       int64  `json:"role_id" db:"role_id"`
 }

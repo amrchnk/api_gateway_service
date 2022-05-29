@@ -23,24 +23,6 @@ definitions:
       user_id:
         type: integer
     type: object
-  models.CreatePostRequest:
-    properties:
-      categories:
-        items:
-          type: integer
-        type: array
-      description:
-        type: string
-      images:
-        items:
-          type: string
-        type: array
-      title:
-        type: string
-    required:
-    - images
-    - title
-    type: object
   models.GetAllUserPostsResponse:
     properties:
       user_posts:
@@ -390,16 +372,19 @@ paths:
   /posts/:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: create post with account id that written in context
       operationId: delete-post
       parameters:
-      - description: post info
-        in: body
+      - in: formData
+        name: json
+        required: true
+        type: string
+      - description: post files
+        in: formData
         name: input
         required: true
-        schema:
-          $ref: '#/definitions/models.CreatePostRequest'
+        type: file
       produces:
       - application/json
       responses:

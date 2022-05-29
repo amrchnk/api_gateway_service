@@ -90,12 +90,12 @@ func (ac *AuthClient) DeleteUserByIdFunc(ctx context.Context, id int64) (string,
 	return msg, err
 }
 
-func (ac *AuthClient) UpdateUserFunc(ctx context.Context, user models.UpdateUserResponse) (string, error) {
+func (ac *AuthClient) UpdateUserFunc(ctx context.Context, user models.UpdateUserRequestTextData) (string, error) {
 	userReq := auth.User{
 		Slug:       user.Id,
 		Username:   user.Username,
 		Login:      user.Login,
-		Password:   user.Password,
+		Password:   generatePasswordHash(user.Password),
 		UserRoleId: user.RoleId,
 		ProfileImage: user.ProfileImage,
 	}
