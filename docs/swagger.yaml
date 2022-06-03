@@ -135,17 +135,9 @@ definitions:
       title:
         type: string
     type: object
-  models.UpdateUserResponse:
+  models.UpdateUserRequest:
     properties:
-      login:
-        type: string
-      password:
-        type: string
-      profile_image:
-        type: string
-      role_id:
-        type: integer
-      username:
+      json:
         type: string
     type: object
   models.User:
@@ -213,6 +205,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: Get account info
       tags:
       - account
@@ -242,6 +236,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: Create account by user id
       tags:
       - account
@@ -273,6 +269,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: LogOut
       tags:
       - auth
@@ -304,6 +302,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: Refresh token
       tags:
       - auth
@@ -377,7 +377,7 @@ paths:
       operationId: delete-post
       parameters:
       - in: formData
-        name: json
+        name: postInfo
         required: true
         type: string
       - description: post files
@@ -400,6 +400,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: Create post
       tags:
       - posts
@@ -430,6 +432,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: Delete post
       tags:
       - posts
@@ -494,6 +498,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: Update post
       tags:
       - posts
@@ -581,6 +587,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: GetFromCache all users
       tags:
       - users
@@ -595,7 +603,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.UpdateUserResponse'
+          $ref: '#/definitions/models.UpdateUserRequest'
       produces:
       - application/json
       responses:
@@ -615,6 +623,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: Update User fields
       tags:
       - users
@@ -649,6 +659,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: Delete User By Id
       tags:
       - users
@@ -682,7 +694,14 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handler.errorResponse'
+      security:
+      - Authorization: []
       summary: GetFromCache User By Id
       tags:
       - users
+securityDefinitions:
+  Authorization:
+    in: header
+    name: Bearer token
+    type: apiKey
 swagger: "2.0"

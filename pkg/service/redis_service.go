@@ -11,7 +11,7 @@ type RedisService struct {
 }
 
 func NewRedisService(cache *cache.RedisClient) RedisService {
-	return RedisService{cache}
+	return RedisService{cache: cache}
 }
 
 func (r RedisService) GetFromCache(ctx context.Context, key string) ([]byte, error) {

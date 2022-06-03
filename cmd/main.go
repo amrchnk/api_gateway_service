@@ -16,6 +16,10 @@ import (
 	"syscall"
 )
 
+var (
+	cacheClient *cache.RedisClient
+)
+
 func init() {
 	err := initConfig()
 	if err != nil {
@@ -37,20 +41,24 @@ func init() {
 
 // @host      localhost:8000
 // @BasePath /api/v1
+//@securityDefinitions.apikey Authorization
+//@in header
+//@name Bearer token
+
 func main() {
 	ctx := context.Background()
 	clients.InitAuthClient(ctx)
 	clients.InitAccountClient(ctx)
-	redisOptions := &cache.Options{
-		Addr:     viper.GetString("redis.addr"),
+	cc, err := cache.NewRedisClient(ctx, &cache.Options{
+		Addr:     viper.GetString("redis.host"),
 		Password: viper.GetString("redis.password"),
 		DB:       0,
-	}
-	cache, err := cache.NewRedisClient(ctx, redisOptions)
+	})
 	if err != nil {
 		log.Fatalf("failed to initialize redis: %s", err.Error())
 	}
 
+	cacheClient = cc
 	authService := service.NewAuthService(clients.AuthClientExecutor())
 	tokenService, err := service.NewTokenService(os.Getenv("ACCESS_KEY"), os.Getenv("REFRESH_KEY"))
 	if err != nil {
@@ -58,9 +66,9 @@ func main() {
 	}
 	accountService := service.NewAccountService(clients.AccountClientExecutor())
 	mediaService := service.NewCloudService()
-	redisService := service.NewRedisService(cache)
+	redisService := service.NewRedisService(cacheClient)
 
-	GwService := service.NewApiGWService(authService, accountService, mediaService, redisService, tokenService)
+	GwService := service.NewApiGWService(authService, accountService, mediaService, &redisService, tokenService)
 	handlers := handler.NewHandler(GwService)
 
 	srv := new(design_app.Server)

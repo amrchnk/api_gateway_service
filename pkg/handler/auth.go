@@ -111,6 +111,7 @@ func (h *Handler) signIn(c *gin.Context) {
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /auth/logout [post]
+// @Security Authorization
 func (h *Handler) logOut(c *gin.Context) {
 	var request models.SignOutRequest
 
@@ -157,6 +158,7 @@ func (h *Handler) logOut(c *gin.Context) {
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /auth/refresh [post]
+// @Security Authorization
 func (h *Handler) refreshAccessToken(c *gin.Context) {
 	var request models.RefreshTokenRequest
 	if err := c.BindJSON(&request); err != nil {

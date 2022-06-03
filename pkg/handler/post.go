@@ -23,6 +23,7 @@ import (
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /posts/ [post]
+// @Security Authorization
 func (h *Handler) createPost(c *gin.Context) {
 	userId, exist := c.Get(userCtx)
 	if !exist {
@@ -105,6 +106,7 @@ func (h *Handler) createPost(c *gin.Context) {
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /posts/:id [delete]
+// @Security Authorization
 func (h *Handler) deletePostById(c *gin.Context) {
 	postId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -209,6 +211,7 @@ func (h *Handler) getPostById(c *gin.Context) {
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /posts/:id [put]
+// @Security Authorization
 func (h *Handler) updatePostById(c *gin.Context) {
 	postId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

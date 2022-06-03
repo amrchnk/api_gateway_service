@@ -43,46 +43,17 @@ func (m CloudService) UploadOneFile(path string, file models.File) (string, erro
 	defer cancel()
 
 	uploadParam, err := m.Upload.Upload(ctx, file.File, uploader.UploadParams{
-		Folder:      path,
+		Folder: path,
 	})
+
+	if uploadParam.Error.Message != "" {
+		return "", errors.New(uploadParam.Error.Message)
+	}
 	if err != nil {
 		return "", err
 	}
 	link := uploadParam.SecureURL
 	return link, nil
-}
-
-func (m CloudService) DeleteFiles(links []string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	for _, link := range links {
-		arr := strings.Split(link, "/")
-		fileName := strings.Split(arr[len(arr)-1], ".")[0]
-		result, err := m.Upload.Destroy(ctx, uploader.DestroyParams{
-			PublicID: arr[len(arr)-2] + "/" + fileName,
-		})
-		if err != nil {
-			return fmt.Errorf("error while deleting file from remote server: %v", err)
-		}
-		fmt.Println(result.Result)
-	}
-	return nil
-}
-
-func (m CloudService) DeleteFile(link string) error {
-	ctx := context.Background()
-	arr := strings.Split(link, "/")
-	fileName := strings.Split(arr[len(arr)-1], ".")[0]
-	result, err := m.Upload.Destroy(ctx, uploader.DestroyParams{
-		PublicID: arr[len(arr)-2] + "/" + fileName,
-	})
-	if err != nil {
-		log.Printf("[ERROR]: error while deleting file from remote server -  %v", err)
-		return fmt.Errorf("error while deleting file from remote server: %v", err)
-	}
-	fmt.Println(result)
-	return nil
 }
 
 func (m CloudService) FilesUpload(path string, files []models.File) ([]string, error) {
@@ -106,4 +77,43 @@ func (m CloudService) FilesUpload(path string, files []models.File) ([]string, e
 	}
 
 	return links, nil
+}
+
+func (m CloudService) DeleteFiles(links []string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	for _, link := range links {
+		arr := strings.Split(link, "/")
+		fileName := strings.Split(arr[len(arr)-1], ".")[0]
+		result, err := m.Upload.Destroy(ctx, uploader.DestroyParams{
+			PublicID: arr[len(arr)-2] + "/" + fileName,
+		})
+		if err != nil {
+			return fmt.Errorf("error while deleting file from remote server: %v", err)
+		}
+		fmt.Println(result.Result)
+	}
+	return nil
+}
+
+func (m CloudService) DeleteFile(link string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	arr := strings.Split(link, "/")
+	fileName := strings.Split(arr[len(arr)-1], ".")[0]
+	pubId := "design_app/avatars/" + arr[len(arr)-2] + "/" + fileName
+	result, err := m.Upload.Destroy(ctx, uploader.DestroyParams{
+		PublicID: pubId,
+	})
+	if result.Error.Message != "" {
+		log.Printf("[ERROR]: error while deleting file from remote server -  %v", result.Error.Message)
+		return fmt.Errorf("error while deleting file from remote server: %v", result.Error.Message)
+	}
+	if err != nil {
+		log.Printf("[ERROR]: error while deleting file from remote server -  %v", err)
+		return fmt.Errorf("error while deleting file from remote server: %v", err)
+	}
+
+	return nil
 }

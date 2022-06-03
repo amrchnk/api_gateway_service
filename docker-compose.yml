@@ -1,8 +1,26 @@
 version: '3.8'
 services:
-  redis:
+  design_app: # описываем контейнер приложения
+    container_name: design_app
+    image: design_app
+    build: ./ # директория с докер-файлом
+    ports: # порты приложения
+      - "8000:8000"
+    depends_on: # зависимости от контейнеров
+      - cache
+    networks: # сеть, в которой разворачиваем
+      - design_app_network
+
+  cache:
     image: redis
     restart: unless-stopped
-    container_name: redis
+    container_name: cache
     ports:
       - "6379:6379"
+    networks: # сеть, в которой разворачиваем
+      - design_app_network
+
+networks:
+  design_app_network:
+    external: false
+    name: design_app_network

@@ -5,5 +5,5 @@ api:
   accountGrpcPort: "8002"
 
 redis:
-  port: "6379"
+  host: "localhost:6379"
   password: ""

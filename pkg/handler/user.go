@@ -21,6 +21,7 @@ import (
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /users/:id [get]
+// @Security Authorization
 func (h *Handler) getUserById(c *gin.Context) {
 
 	userId, err := strconv.Atoi(c.Param("id"))
@@ -50,6 +51,7 @@ func (h *Handler) getUserById(c *gin.Context) {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /users/:id [delete]
+// @Security Authorization
 func (h *Handler) deleteUserById(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -84,6 +86,7 @@ func (h *Handler) deleteUserById(c *gin.Context) {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /users/ [put]
+// @Security Authorization
 func (h *Handler) updateUser(c *gin.Context) {
 	userId, exist := c.Get(userCtx)
 	if !exist {
@@ -92,8 +95,8 @@ func (h *Handler) updateUser(c *gin.Context) {
 	}
 
 	var request models.UpdateUserRequest
-
-	if err := c.ShouldBind(&request); err != nil {
+	var err error
+	if err = c.ShouldBind(&request); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
@@ -105,7 +108,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 	}
 
 	var userChanges models.UpdateUserRequestTextData
-	textData := form.Value["json"]
+	textData := form.Value["Json"]
 	if textData != nil {
 		err = json.Unmarshal([]byte(textData[0]), &userChanges)
 		if err != nil {
@@ -114,7 +117,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 		}
 	}
 
-	avatar := form.File["avatar"][0]
+	avatar := form.File["Files"]
 	var link string
 	if avatar != nil {
 		user, err := h.Imp.GetUserById(c, userId.(int64))
@@ -129,12 +132,12 @@ func (h *Handler) updateUser(c *gin.Context) {
 			return
 		}
 
-		osFile, err := avatar.Open()
+		osFile, err := avatar[0].Open()
 		if err != nil {
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
-		link, err = h.Imp.UploadOneFile(fmt.Sprintf("design_app/avatars/user%d", userId), models.File{File: osFile, FileName: avatar.Filename})
+		link, err = h.Imp.UploadOneFile(fmt.Sprintf("design_app/avatars/user%d", userId), models.File{File: osFile, FileName: avatar[0].Filename})
 		if err != nil {
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
@@ -167,6 +170,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /users/ [get]
+// @Security Authorization
 func (h *Handler) getAllUsers(c *gin.Context) {
 	users, err := h.Imp.GetAllUsers(c)
 	if err != nil {

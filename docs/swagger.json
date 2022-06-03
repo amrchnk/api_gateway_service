@@ -15,6 +15,11 @@
     "paths": {
         "/account/:id": {
             "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "get account info by user id",
                 "consumes": [
                     "application/json"
@@ -58,6 +63,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "create default account with user id from body",
                 "consumes": [
                     "application/json"
@@ -103,6 +113,11 @@
         },
         "/auth/logout": {
             "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "logout user",
                 "consumes": [
                     "application/json"
@@ -150,6 +165,11 @@
         },
         "/auth/refresh": {
             "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "refresh access token",
                 "consumes": [
                     "application/json"
@@ -291,6 +311,11 @@
         },
         "/posts/": {
             "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "create post with account id that written in context",
                 "consumes": [
                     "multipart/form-data"
@@ -306,7 +331,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "json",
+                        "name": "postInfo",
                         "in": "formData",
                         "required": true
                     },
@@ -385,6 +410,11 @@
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "Update post by post id",
                 "consumes": [
                     "application/json"
@@ -437,6 +467,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "delete post by post id",
                 "consumes": [
                     "application/json"
@@ -571,6 +606,11 @@
         },
         "/users/": {
             "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "get all users",
                 "consumes": [
                     "application/json"
@@ -611,6 +651,11 @@
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "Update user fields",
                 "consumes": [
                     "application/json"
@@ -630,7 +675,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UpdateUserResponse"
+                            "$ref": "#/definitions/models.UpdateUserRequest"
                         }
                     }
                 ],
@@ -664,6 +709,11 @@
         },
         "/users/:id": {
             "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "get user by id",
                 "consumes": [
                     "application/json"
@@ -713,6 +763,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "delete user by id",
                 "consumes": [
                     "application/json"
@@ -971,22 +1026,10 @@
                 }
             }
         },
-        "models.UpdateUserResponse": {
+        "models.UpdateUserRequest": {
             "type": "object",
             "properties": {
-                "login": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "profile_image": {
-                    "type": "string"
-                },
-                "role_id": {
-                    "type": "integer"
-                },
-                "username": {
+                "json": {
                     "type": "string"
                 }
             }
@@ -1032,6 +1075,13 @@
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "Authorization": {
+            "type": "apiKey",
+            "name": "Bearer token",
+            "in": "header"
         }
     }
 }

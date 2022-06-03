@@ -22,6 +22,11 @@ const docTemplate = `{
     "paths": {
         "/account/:id": {
             "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "get account info by user id",
                 "consumes": [
                     "application/json"
@@ -65,6 +70,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "create default account with user id from body",
                 "consumes": [
                     "application/json"
@@ -110,6 +120,11 @@ const docTemplate = `{
         },
         "/auth/logout": {
             "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "logout user",
                 "consumes": [
                     "application/json"
@@ -157,6 +172,11 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "refresh access token",
                 "consumes": [
                     "application/json"
@@ -298,6 +318,11 @@ const docTemplate = `{
         },
         "/posts/": {
             "post": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "create post with account id that written in context",
                 "consumes": [
                     "multipart/form-data"
@@ -313,7 +338,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "json",
+                        "name": "postInfo",
                         "in": "formData",
                         "required": true
                     },
@@ -392,6 +417,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "Update post by post id",
                 "consumes": [
                     "application/json"
@@ -444,6 +474,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "delete post by post id",
                 "consumes": [
                     "application/json"
@@ -578,6 +613,11 @@ const docTemplate = `{
         },
         "/users/": {
             "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "get all users",
                 "consumes": [
                     "application/json"
@@ -618,6 +658,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "Update user fields",
                 "consumes": [
                     "application/json"
@@ -637,7 +682,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UpdateUserResponse"
+                            "$ref": "#/definitions/models.UpdateUserRequest"
                         }
                     }
                 ],
@@ -671,6 +716,11 @@ const docTemplate = `{
         },
         "/users/:id": {
             "get": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "get user by id",
                 "consumes": [
                     "application/json"
@@ -720,6 +770,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
                 "description": "delete user by id",
                 "consumes": [
                     "application/json"
@@ -978,22 +1033,10 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UpdateUserResponse": {
+        "models.UpdateUserRequest": {
             "type": "object",
             "properties": {
-                "login": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "profile_image": {
-                    "type": "string"
-                },
-                "role_id": {
-                    "type": "integer"
-                },
-                "username": {
+                "json": {
                     "type": "string"
                 }
             }
@@ -1039,6 +1082,13 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "Authorization": {
+            "type": "apiKey",
+            "name": "Bearer token",
+            "in": "header"
         }
     }
 }`

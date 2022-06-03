@@ -27,10 +27,15 @@ type CreatePostRequest struct {
 	PostInfo string                  `form:"PostInfo" binding:"required"`
 }
 
+type UpdateUserRequest struct {
+	Files []*multipart.FileHeader `form:"Files" swaggerignore:"true"`
+	Json  string                  `form:"Json"`
+}
+
 type CreatePostTextData struct {
-	Title       string   `json:"title" db:"title" binding:"required"`
-	Description string   `json:"description" db:"description"`
-	Categories  []int64  `json:"categories,omitempty"`
+	Title       string  `json:"title" db:"title" binding:"required"`
+	Description string  `json:"description" db:"description"`
+	Categories  []int64 `json:"categories,omitempty"`
 }
 
 type UpdatePostRequest struct {
@@ -45,11 +50,6 @@ type GetAllUsersPostsRequest struct {
 	Offset  int64  `json:"offset"`
 	Limit   int64  `json:"limit"`
 	Sorting string `json:"sorting"`
-}
-
-type UpdateUserRequest struct {
-	ProfileImage *multipart.FileHeader `form:"avatar" swaggerignore:"true"`
-	Json         string                `form:"json"`
 }
 
 type UpdateUserRequestTextData struct {

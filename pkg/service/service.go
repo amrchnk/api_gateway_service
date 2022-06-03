@@ -14,7 +14,7 @@ type Implementation struct {
 	ITokenService
 }
 
-func NewApiGWService(auth AuthService, account AccountService, media CloudService, redis RedisService, token *TokenService) *Implementation {
+func NewApiGWService(auth AuthService, account AccountService, media CloudService, redis *RedisService, token *TokenService) *Implementation {
 	return &Implementation{
 		IAuthService:       auth,
 		IAccountService:    account,
