@@ -48,7 +48,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			post.GET(":id", h.getPostById)
 			post.PUT(":id",h.userIdentity, h.updatePostById)
 			post.GET("/users/:id", h.getAllUserPosts)
-			post.GET("/users/", h.getAllUsersPosts)
+			post.POST("/users/", h.getAllUsersPosts)
 		}
 
 		account := v1.Group("/account", h.userIdentity)

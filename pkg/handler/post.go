@@ -17,13 +17,13 @@ import (
 // @ID delete-post
 // @Accept  mpfd
 // @Produce  json
-// @Param input formData models.CreatePostRequest true "post info"
-// @Param input formData file true "post files"
+// @Param PostInfo formData string true "post info"
+// @Param Files formData file true "post files"
 // @Success 200 {object} Response
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Router /posts/ [post]
-// @Security Authorization
+// @Security ApiKeyAuth
 func (h *Handler) createPost(c *gin.Context) {
 	userId, exist := c.Get(userCtx)
 	if !exist {
@@ -105,8 +105,8 @@ func (h *Handler) createPost(c *gin.Context) {
 // @Success 200 {object} Response
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
-// @Router /posts/:id [delete]
-// @Security Authorization
+// @Router /posts/{id} [delete]
+// @Security ApiKeyAuth
 func (h *Handler) deletePostById(c *gin.Context) {
 	postId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -161,7 +161,7 @@ func DeletePostImages(h *Handler, ctx context.Context, postId int64) error {
 // @Success 200 {object} models.GetPostByIdResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
-// @Router /posts/:id [get]
+// @Router /posts/{id} [get]
 func (h *Handler) getPostById(c *gin.Context) {
 	postId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -205,12 +205,13 @@ func (h *Handler) getPostById(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id   path int64  true  "Post ID"
-// @Param input body models.UpdatePostRequest true "post update info"
+// @Param Json formData string false "post info"
+// @Param Files formData file false "post files"
 // @Success 200 {object} Response
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
-// @Router /posts/:id [put]
-// @Security Authorization
+// @Router /posts/{id} [put]
+// @Security ApiKeyAuth
 func (h *Handler) updatePostById(c *gin.Context) {
 	userId, exist := c.Get(userCtx)
 	if !exist {
@@ -284,9 +285,9 @@ func (h *Handler) updatePostById(c *gin.Context) {
 	newResponse(c, http.StatusOK, msg)
 }
 
-// @Summary GetFromCache user posts
+// @Summary Get user posts
 // @Tags posts
-// @Description GetFromCache all user post by user id
+// @Description Get all user post by user id
 // @ID get-user-posts
 // @Accept  json
 // @Param id   path int64  true  "User ID"
@@ -294,7 +295,7 @@ func (h *Handler) updatePostById(c *gin.Context) {
 // @Success 200 {object} models.GetAllUserPostsResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
-// @Router /posts/users/:id [get]
+// @Router /posts/users/{id} [get]
 func (h *Handler) getAllUserPosts(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -331,16 +332,17 @@ func (h *Handler) getAllUserPosts(c *gin.Context) {
 	})
 }
 
-// @Summary GetFromCache all users posts
+// @Summary Get all users posts
 // @Tags posts
-// @Description GetFromCache all users posts
+// @Description Get all users posts
 // @ID get-users-posts
 // @Param input body models.GetAllUsersPostsRequest true "params for partition"
+// @Accept  json
 // @Produce  json
 // @Success 200 {object} models.GetAllUsersPostsResponse
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
-// @Router /posts/users/ [get]
+// @Router /posts/users/ [post]
 func (h *Handler) getAllUsersPosts(c *gin.Context) {
 	var request models.GetAllUsersPostsRequest
 	if err := c.BindJSON(&request); err != nil {

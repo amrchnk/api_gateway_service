@@ -28,7 +28,7 @@ type CreatePostRequest struct {
 }
 
 type UpdateUserRequest struct {
-	File []*multipart.FileHeader `form:"File"`
+	File []*multipart.FileHeader `swaggerignore:"true"`
 	Json string
 }
 
@@ -39,8 +39,8 @@ type CreatePostTextData struct {
 }
 
 type UpdatePostRequest struct {
-	Files []*multipart.FileHeader `form:"Files" swaggerignore:"true"`
-	Json  string                  `form:"Json"`
+	Files []*multipart.FileHeader
+	Json  string
 }
 
 type UpdatePostRequestTextData struct {

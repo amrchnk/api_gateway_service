@@ -20,11 +20,11 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/account/:id": {
+        "/account/{id}": {
             "get": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "get account info by user id",
@@ -72,7 +72,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "create default account with user id from body",
@@ -122,7 +122,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "logout user",
@@ -174,7 +174,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "refresh access token",
@@ -320,7 +320,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "create post with account id that written in context",
@@ -338,14 +338,15 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "postInfo",
+                        "description": "post info",
+                        "name": "PostInfo",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "file",
                         "description": "post files",
-                        "name": "input",
+                        "name": "Files",
                         "in": "formData",
                         "required": true
                     }
@@ -372,9 +373,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/posts/:id": {
-            "get": {
-                "description": "GetFromCache post by post id",
+        "/posts/users/": {
+            "post": {
+                "description": "Get all users posts",
                 "consumes": [
                     "application/json"
                 ],
@@ -384,7 +385,99 @@ const docTemplate = `{
                 "tags": [
                     "posts"
                 ],
-                "summary": "GetFromCache post",
+                "summary": "Get all users posts",
+                "operationId": "get-users-posts",
+                "parameters": [
+                    {
+                        "description": "params for partition",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.GetAllUsersPostsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetAllUsersPostsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/users/{id}": {
+            "get": {
+                "description": "Get all user post by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get user posts",
+                "operationId": "get-user-posts",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetAllUserPostsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/{id}": {
+            "get": {
+                "description": "get post by post id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "get post by id",
                 "operationId": "get-post",
                 "parameters": [
                     {
@@ -419,7 +512,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Update post by post id",
@@ -443,13 +536,16 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "post update info",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UpdatePostRequest"
-                        }
+                        "type": "string",
+                        "description": "post info",
+                        "name": "Json",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "post files",
+                        "name": "Files",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -476,7 +572,7 @@ const docTemplate = `{
             "delete": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "delete post by post id",
@@ -522,100 +618,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/posts/users/": {
-            "get": {
-                "description": "GetFromCache all users posts",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "posts"
-                ],
-                "summary": "GetFromCache all users posts",
-                "operationId": "get-users-posts",
-                "parameters": [
-                    {
-                        "description": "params for partition",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.GetAllUsersPostsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.GetAllUsersPostsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/posts/users/:id": {
-            "get": {
-                "description": "GetFromCache all user post by user id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "posts"
-                ],
-                "summary": "GetFromCache user posts",
-                "operationId": "get-user-posts",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.GetAllUserPostsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/users/": {
             "get": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "get all users",
@@ -628,7 +635,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "GetFromCache all users",
+                "summary": "Get all users",
                 "operationId": "get-all-users",
                 "responses": {
                     "200": {
@@ -660,7 +667,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "Update user fields",
@@ -678,15 +685,15 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "json",
+                        "description": "user new info",
+                        "name": "Json",
                         "in": "formData"
                     },
                     {
                         "type": "file",
                         "description": "user avatar",
                         "name": "File",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -717,11 +724,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/:id": {
+        "/users/{id}": {
             "get": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "get user by id",
@@ -734,7 +741,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "GetFromCache User By Id",
+                "summary": "Get user By Id",
                 "operationId": "get-user-by-id",
                 "parameters": [
                     {
@@ -775,7 +782,7 @@ const docTemplate = `{
             "delete": {
                 "security": [
                     {
-                        "Authorization": []
+                        "ApiKeyAuth": []
                     }
                 ],
                 "description": "delete user by id",
@@ -1010,32 +1017,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UpdatePostRequest": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "models.User": {
             "type": "object",
             "required": [
@@ -1080,9 +1061,9 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "Authorization": {
+        "ApiKeyAuth": {
             "type": "apiKey",
-            "name": "Bearer token",
+            "name": "Authorization",
             "in": "header"
         }
     }

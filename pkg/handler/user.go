@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-// @Summary GetFromCache User By Id
+// @Summary Get user By Id
 // @Tags users
 // @Description get user by id
 // @ID get-user-by-id
@@ -21,8 +21,8 @@ import (
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /users/:id [get]
-// @Security Authorization
+// @Router /users/{id} [get]
+// @Security ApiKeyAuth
 func (h *Handler) getUserById(c *gin.Context) {
 
 	userId, err := strconv.Atoi(c.Param("id"))
@@ -51,8 +51,8 @@ func (h *Handler) getUserById(c *gin.Context) {
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /users/:id [delete]
-// @Security Authorization
+// @Router /users/{id} [delete]
+// @Security ApiKeyAuth
 func (h *Handler) deleteUserById(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -81,14 +81,14 @@ func (h *Handler) deleteUserById(c *gin.Context) {
 // @ID update-user
 // @Accept  mpfd
 // @Produce  json
-// @Param Json formData string "user updates"
-// @Param File formData file "user avatar"
+// @Param Json formData string false "user new info"
+// @Param File formData file false "user avatar"
 // @Success 200 {string} string "message"
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /users/ [put]
-// @Security Authorization
+// @Security ApiKeyAuth
 func (h *Handler) updateUser(c *gin.Context) {
 	userId, exist := c.Get(userCtx)
 	if !exist {
@@ -164,7 +164,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 	newResponse(c, http.StatusOK, msg)
 }
 
-// @Summary GetFromCache all users
+// @Summary Get all users
 // @Tags users
 // @Description get all users
 // @ID get-all-users
@@ -175,7 +175,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /users/ [get]
-// @Security Authorization
+// @Security ApiKeyAuth
 func (h *Handler) getAllUsers(c *gin.Context) {
 	users, err := h.Imp.GetAllUsers(c)
 	if err != nil {

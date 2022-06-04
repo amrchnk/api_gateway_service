@@ -41,9 +41,9 @@ func init() {
 
 // @host      localhost:8000
 // @BasePath /api/v1
-//@securityDefinitions.apikey Authorization
-//@in header
-//@name Bearer token
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 func main() {
 	ctx := context.Background()

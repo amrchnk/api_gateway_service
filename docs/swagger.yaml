@@ -118,23 +118,6 @@ definitions:
       user_id:
         type: integer
     type: object
-  models.UpdatePostRequest:
-    properties:
-      categories:
-        items:
-          type: integer
-        type: array
-      description:
-        type: string
-      id:
-        type: integer
-      images:
-        items:
-          type: string
-        type: array
-      title:
-        type: string
-    type: object
   models.User:
     properties:
       created_at:
@@ -173,7 +156,7 @@ info:
   title: Designers App Swagger API
   version: "1.0"
 paths:
-  /account/:id:
+  /account/{id}:
     get:
       consumes:
       - application/json
@@ -201,7 +184,7 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
+      - ApiKeyAuth: []
       summary: Get account info
       tags:
       - account
@@ -232,7 +215,7 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
+      - ApiKeyAuth: []
       summary: Create account by user id
       tags:
       - account
@@ -265,7 +248,7 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
+      - ApiKeyAuth: []
       summary: LogOut
       tags:
       - auth
@@ -298,7 +281,7 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
+      - ApiKeyAuth: []
       summary: Refresh token
       tags:
       - auth
@@ -371,13 +354,14 @@ paths:
       description: create post with account id that written in context
       operationId: delete-post
       parameters:
-      - in: formData
-        name: postInfo
+      - description: post info
+        in: formData
+        name: PostInfo
         required: true
         type: string
       - description: post files
         in: formData
-        name: input
+        name: Files
         required: true
         type: file
       produces:
@@ -396,11 +380,11 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
+      - ApiKeyAuth: []
       summary: Create post
       tags:
       - posts
-  /posts/:id:
+  /posts/{id}:
     delete:
       consumes:
       - application/json
@@ -428,14 +412,14 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
+      - ApiKeyAuth: []
       summary: Delete post
       tags:
       - posts
     get:
       consumes:
       - application/json
-      description: GetFromCache post by post id
+      description: get post by post id
       operationId: get-post
       parameters:
       - description: Post ID
@@ -458,7 +442,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
-      summary: GetFromCache post
+      summary: get post by id
       tags:
       - posts
     put:
@@ -472,12 +456,14 @@ paths:
         name: id
         required: true
         type: integer
-      - description: post update info
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/models.UpdatePostRequest'
+      - description: post info
+        in: formData
+        name: Json
+        type: string
+      - description: post files
+        in: formData
+        name: Files
+        type: file
       produces:
       - application/json
       responses:
@@ -494,13 +480,15 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
+      - ApiKeyAuth: []
       summary: Update post
       tags:
       - posts
   /posts/users/:
-    get:
-      description: GetFromCache all users posts
+    post:
+      consumes:
+      - application/json
+      description: Get all users posts
       operationId: get-users-posts
       parameters:
       - description: params for partition
@@ -524,14 +512,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
-      summary: GetFromCache all users posts
+      summary: Get all users posts
       tags:
       - posts
-  /posts/users/:id:
+  /posts/users/{id}:
     get:
       consumes:
       - application/json
-      description: GetFromCache all user post by user id
+      description: Get all user post by user id
       operationId: get-user-posts
       parameters:
       - description: User ID
@@ -554,7 +542,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handler.errorResponse'
-      summary: GetFromCache user posts
+      summary: Get user posts
       tags:
       - posts
   /users/:
@@ -583,8 +571,8 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
-      summary: GetFromCache all users
+      - ApiKeyAuth: []
+      summary: Get all users
       tags:
       - users
     put:
@@ -593,13 +581,13 @@ paths:
       description: Update user fields
       operationId: update-user
       parameters:
-      - in: formData
-        name: json
+      - description: user new info
+        in: formData
+        name: Json
         type: string
       - description: user avatar
         in: formData
-        name: Files
-        required: true
+        name: File
         type: file
       produces:
       - application/json
@@ -621,11 +609,11 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
+      - ApiKeyAuth: []
       summary: Update User fields
       tags:
       - users
-  /users/:id:
+  /users/{id}:
     delete:
       consumes:
       - application/json
@@ -657,7 +645,7 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
+      - ApiKeyAuth: []
       summary: Delete User By Id
       tags:
       - users
@@ -692,13 +680,13 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       security:
-      - Authorization: []
-      summary: GetFromCache User By Id
+      - ApiKeyAuth: []
+      summary: Get user By Id
       tags:
       - users
 securityDefinitions:
-  Authorization:
+  ApiKeyAuth:
     in: header
-    name: Bearer token
+    name: Authorization
     type: apiKey
 swagger: "2.0"
