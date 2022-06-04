@@ -89,10 +89,13 @@ func (m CloudService) DeleteFiles(links []string) error {
 		result, err := m.Upload.Destroy(ctx, uploader.DestroyParams{
 			PublicID: arr[len(arr)-2] + "/" + fileName,
 		})
+		if result.Error.Message != "" {
+			log.Printf("[ERROR]: error while deleting file from remote server -  %v", result.Error.Message)
+			return fmt.Errorf("error while deleting file from remote server: %v", result.Error.Message)
+		}
 		if err != nil {
 			return fmt.Errorf("error while deleting file from remote server: %v", err)
 		}
-		fmt.Println(result.Result)
 	}
 	return nil
 }

@@ -17,7 +17,7 @@ func (a AccountService) GetPostById(ctx context.Context, postId int64) (models.P
 	return a.account.GetPostByIdFunc(ctx, postId)
 }
 
-func (a AccountService) UpdatePost(ctx context.Context, post models.UpdatePostRequest) (string, error) {
+func (a AccountService) UpdatePost(ctx context.Context, post models.UpdatePostRequestTextData) (string, error) {
 	return a.account.UpdatePostFunc(ctx, post)
 }
 

@@ -28,8 +28,8 @@ type CreatePostRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Files []*multipart.FileHeader `form:"Files" swaggerignore:"true"`
-	Json  string                  `form:"Json"`
+	File []*multipart.FileHeader `form:"File"`
+	Json string
 }
 
 type CreatePostTextData struct {
@@ -39,17 +39,16 @@ type CreatePostTextData struct {
 }
 
 type UpdatePostRequest struct {
-	Id          int64    `json:"id" db:"id"`
-	Title       string   `json:"title,omitempty" db:"title"`
-	Description string   `json:"description,omitempty" db:"description"`
-	Images      []string `json:"images,omitempty"`
-	Categories  []int64  `json:"categories,omitempty"`
+	Files []*multipart.FileHeader `form:"Files" swaggerignore:"true"`
+	Json  string                  `form:"Json"`
 }
 
-type GetAllUsersPostsRequest struct {
-	Offset  int64  `json:"offset"`
-	Limit   int64  `json:"limit"`
-	Sorting string `json:"sorting"`
+type UpdatePostRequestTextData struct {
+	Id          int64    `json:"-"`
+	Title       string   `json:"title,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Categories  []int64  `json:"categories,omitempty"`
+	Images      []string `json:"images"`
 }
 
 type UpdateUserRequestTextData struct {
@@ -59,4 +58,10 @@ type UpdateUserRequestTextData struct {
 	ProfileImage string `json:"profile_image" db:"profile_image"`
 	Password     string `json:"password" db:"password_hash"`
 	RoleId       int64  `json:"role_id" db:"role_id"`
+}
+
+type GetAllUsersPostsRequest struct {
+	Offset  int64  `json:"offset"`
+	Limit   int64  `json:"limit"`
+	Sorting string `json:"sorting"`
 }

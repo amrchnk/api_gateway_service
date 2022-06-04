@@ -131,9 +131,8 @@ func (h *Handler) deletePostById(c *gin.Context) {
 	newResponse(c, http.StatusOK, msg)
 }
 func DeletePostImages(h *Handler, ctx context.Context, postId int64) error {
-	fmt.Println(postId)
 	images, err := h.Imp.GetImagesFromPost(ctx, postId)
-	fmt.Println(images)
+
 	if err != nil {
 		return err
 	}
@@ -152,9 +151,9 @@ func DeletePostImages(h *Handler, ctx context.Context, postId int64) error {
 	return nil
 }
 
-// @Summary GetFromCache post
+// @Summary get post by id
 // @Tags posts
-// @Description GetFromCache post by post id
+// @Description get post by post id
 // @ID get-post
 // @Accept  json
 // @Produce  json
@@ -213,6 +212,12 @@ func (h *Handler) getPostById(c *gin.Context) {
 // @Router /posts/:id [put]
 // @Security Authorization
 func (h *Handler) updatePostById(c *gin.Context) {
+	userId, exist := c.Get(userCtx)
+	if !exist {
+		newErrorResponse(c, http.StatusBadRequest, "user id isn't found in current context!")
+		return
+	}
+
 	postId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -221,13 +226,56 @@ func (h *Handler) updatePostById(c *gin.Context) {
 	}
 
 	var request models.UpdatePostRequest
-	request.Id = int64(postId)
-	if err := c.BindJSON(&request); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+	if err = c.ShouldBind(&request); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body:"+err.Error())
 		return
 	}
 
-	msg, err := h.Imp.UpdatePost(c, request)
+	form, err := c.MultipartForm()
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var postChanges models.UpdatePostRequestTextData
+	textData := form.Value["Json"]
+	if textData != nil {
+		err = json.Unmarshal([]byte(textData[0]), &postChanges)
+		if err != nil {
+			newErrorResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
+	}
+
+	files := form.File["Files"]
+	if files != nil {
+		err = DeletePostImages(h, c, int64(postId))
+		if err != nil {
+			log.Printf("[ERROR]: %v", err)
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		filesInput := make([]models.File, 0, len(files))
+		for _, file := range files {
+			osFile, err := file.Open()
+			if err != nil {
+				newErrorResponse(c, http.StatusInternalServerError, err.Error())
+				return
+			}
+			filesInput = append(filesInput, models.File{File: osFile, FileName: file.Filename})
+		}
+
+		links, err := h.Imp.FilesUpload(fmt.Sprintf("user%d", userId), filesInput)
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		postChanges.Images = links
+	}
+
+	postChanges.Id = int64(postId)
+	msg, err := h.Imp.UpdatePost(c, postChanges)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

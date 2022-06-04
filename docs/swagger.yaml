@@ -135,11 +135,6 @@ definitions:
       title:
         type: string
     type: object
-  models.UpdateUserRequest:
-    properties:
-      json:
-        type: string
-    type: object
   models.User:
     properties:
       created_at:
@@ -594,16 +589,18 @@ paths:
       - users
     put:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Update user fields
       operationId: update-user
       parameters:
-      - description: user fields to update
-        in: body
-        name: input
+      - in: formData
+        name: json
+        type: string
+      - description: user avatar
+        in: formData
+        name: Files
         required: true
-        schema:
-          $ref: '#/definitions/models.UpdateUserRequest'
+        type: file
       produces:
       - application/json
       responses:

@@ -658,7 +658,7 @@
                 ],
                 "description": "Update user fields",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -670,13 +670,16 @@
                 "operationId": "update-user",
                 "parameters": [
                     {
-                        "description": "user fields to update",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UpdateUserRequest"
-                        }
+                        "type": "string",
+                        "name": "json",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "user avatar",
+                        "name": "Files",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1022,14 +1025,6 @@
                     }
                 },
                 "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.UpdateUserRequest": {
-            "type": "object",
-            "properties": {
-                "json": {
                     "type": "string"
                 }
             }

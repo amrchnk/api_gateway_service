@@ -665,7 +665,7 @@ const docTemplate = `{
                 ],
                 "description": "Update user fields",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -677,13 +677,16 @@ const docTemplate = `{
                 "operationId": "update-user",
                 "parameters": [
                     {
-                        "description": "user fields to update",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UpdateUserRequest"
-                        }
+                        "type": "string",
+                        "name": "json",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "user avatar",
+                        "name": "File",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1029,14 +1032,6 @@ const docTemplate = `{
                     }
                 },
                 "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.UpdateUserRequest": {
-            "type": "object",
-            "properties": {
-                "json": {
                     "type": "string"
                 }
             }

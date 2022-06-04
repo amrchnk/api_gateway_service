@@ -41,7 +41,7 @@ func (ac *AccountClient) DeletePostByIdFunc(ctx context.Context, postId int64) (
 	return resp.Message, err
 }
 
-func (ac *AccountClient) UpdatePostFunc(ctx context.Context, post models.UpdatePostRequest) (string, error) {
+func (ac *AccountClient) UpdatePostFunc(ctx context.Context, post models.UpdatePostRequestTextData) (string, error) {
 
 	resp, err := ac.UpdatePostById(ctx, &account.UpdatePostByIdRequest{
 		PostId:      post.Id,

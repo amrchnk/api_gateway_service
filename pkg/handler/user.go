@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/amrchnk/api-gateway/pkg/models"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -78,9 +79,10 @@ func (h *Handler) deleteUserById(c *gin.Context) {
 // @Tags users
 // @Description Update user fields
 // @ID update-user
-// @Accept  json
+// @Accept  mpfd
 // @Produce  json
-// @Param input body models.UpdateUserRequest true "user fields to update"
+// @Param Json formData string "user updates"
+// @Param File formData file "user avatar"
 // @Success 200 {string} string "message"
 // @Failure 400 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -91,6 +93,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 	userId, exist := c.Get(userCtx)
 	if !exist {
 		newErrorResponse(c, http.StatusBadRequest, "user id isn't found in current context!")
+		log.Println("[ERROR]: user id isn't found in current context!")
 		return
 	}
 
@@ -117,9 +120,10 @@ func (h *Handler) updateUser(c *gin.Context) {
 		}
 	}
 
-	avatar := form.File["Files"]
-	var link string
+	avatar := form.File["File"]
+
 	if avatar != nil {
+		var link string
 		user, err := h.Imp.GetUserById(c, userId.(int64))
 		if err != nil {
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -142,9 +146,10 @@ func (h *Handler) updateUser(c *gin.Context) {
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
+		userChanges.ProfileImage = link
 	}
 
-	userChanges.ProfileImage, userChanges.Id = link, userId.(int64)
+	userChanges.Id = userId.(int64)
 
 	if userChanges.Username == "" && userChanges.Login == "" && userChanges.Password == "" && userChanges.ProfileImage == "" {
 		newErrorResponse(c, http.StatusBadRequest, "at least one parameter must be passed to change")
